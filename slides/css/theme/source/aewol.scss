@@ -1,0 +1,64 @@
+/**
+ * Aewol theme for reveal.js.
+ *
+ * Copyright (C) 2015 Daehyun Kim
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+@import url(https://fonts.googleapis.com/css?family=Montserrat:700);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic);
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: rgb(38, 38, 38);
+
+$mainFont: 'Open Sans', sans-serif;
+$mainColor: rgb(219, 219, 219);
+$headingColor: rgb(117, 188, 185);
+$linkColor: rgb(115, 171, 210);
+$linkColorHover: lighten( $linkColor, 20% );
+$headingFont: 'Montserrat', Impact, sans-serif;
+$headingFontWeight: bold;
+$headingTextShadow: none;
+$headingLetterSpacing: -0.03em;
+$headingTextTransform: none;
+$selectionBackgroundColor: rgb(54, 112, 113);
+$mainFontSize: 36px;
+$heading1Size: 3.2em;
+
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+.reveal h2 {
+  border-bottom: 3px solid $headingColor;
+}
+
+.reveal section {
+  text-align: left;
+}
+
+section.cover {
+  border-top: 5px dotted $headingColor;
+}
+
+.cover h2, .cover h3 {
+  color: $mainColor;
+}
+
+.cover .name {
+  float: right;
+  margin-top: 30%;
+}
+
+.reveal .fa {
+  font-family: 'FontAwesome';
+  font-style: normal;
+}
