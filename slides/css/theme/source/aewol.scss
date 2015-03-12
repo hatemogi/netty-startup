@@ -20,6 +20,7 @@ $backgroundColor: rgb(38, 38, 38);
 
 $mainFont: 'Open Sans', sans-serif;
 $mainColor: rgb(219, 219, 219);
+$mainFontWeight: bold;
 $headingColor: rgb(117, 188, 185);
 $linkColor: rgb(115, 171, 210);
 $linkColorHover: lighten( $linkColor, 20% );
@@ -28,9 +29,12 @@ $headingFontWeight: bold;
 $headingTextShadow: none;
 $headingLetterSpacing: -0.03em;
 $headingTextTransform: none;
-$selectionBackgroundColor: rgb(54, 112, 113);
-$mainFontSize: 36px;
+$selectionBackgroundColor: rgb(158, 193, 193);
+$mainFontSize: 38px;
 $heading1Size: 3.2em;
+$heading2Size: 2.2em;
+$heading3Size: 1.7em;
+$heading4Size: 1.00em;
 
 
 // Theme template ------------------------------

@@ -14,13 +14,13 @@ body {
 
 .reveal {
   font-family: 'Open Sans', sans-serif;
-  font-size: 36px;
+  font-size: 38px;
   font-weight: normal;
   color: #dbdbdb; }
 
 ::selection {
   color: #fff;
-  background: #367071;
+  background: #9ec1c1;
   text-shadow: none; }
 
 .reveal .slides > section, .reveal .slides > section > section {
@@ -45,10 +45,10 @@ body {
   font-size: 3.2em; }
 
 .reveal h2 {
-  font-size: 2.11em; }
+  font-size: 2.2em; }
 
 .reveal h3 {
-  font-size: 1.55em; }
+  font-size: 1.7em; }
 
 .reveal h4 {
   font-size: 1em; }
