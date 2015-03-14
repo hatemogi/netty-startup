@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Netty 프로그래밍 기초</title>
+		<title>Netty 시작하기 (1)</title>
 
 		<meta name="description" content="자바 환경의 고성능 비동기 네트워크 프레임워크인 Netty를 이해하고, 간단한 예제를 만들어봅니다.">
 		<meta name="author" content="김대현">
@@ -41,10 +41,29 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section class="cover">
-					<h1>Netty 프로그래밍</h1>
+					<h1>Netty 시작하기 (1)</h1>
 					<h3>고성능 비동기 네트워크 프레임워크</h3>
 					<p class="name">
-						<a href="http://hatemogi.com">김대현</a> / <a href="http://twitter.com/hatemagi">@hatemogi</a>
+						<a href="http://hatemogi.com">김대현</a><br/>
+						<a href="http://twitter.com/hatemagi">@hatemogi</a>
+					</p>
+				</section>
+
+				<section>
+					<h2>
+						김대현
+						<small style="vertical-align: bottom;">
+							<a href="https://twitter.com/hatemogi"><i class="fa fa-twitter"></i></a>
+							<a href="https://medium.com/@hatemogi"><i class="fa fa-medium"></i></a>
+							<a href="https://github.com/hatemogi"><i class="fa fa-github"></i></a>
+						</small>
+					</h2>
+					<p data-markdown>
+					* 2015, Netty 기반 서버 개발
+					* 2013, Redis SaaS 서비스, 160+ VM
+					* 2010, MyPeople, 네트워크 아키텍쳐 설계
+					* 2009, Cafe 채팅 부하분산 서버 개발
+					* 2004, Cafe, 한줄메모장 개발, 일일 3억 PV
 					</p>
 				</section>
 
@@ -62,7 +81,7 @@
 						<ul>
 							<li>Event-Driven, 비동기 I/O가 뭔지 알겠다</li>
 							<li>Netty로 개발 해봤다</li>
-							<li>실무에 쓸 수 있겠다</li>
+							<li>(조금 더 공부하면) 실무에 쓸 수 있겠다</li>
 						</ul>
 					</p>
 					<aside class="notes">
@@ -70,6 +89,16 @@
 						오늘 4시간을 잘 보내고나면, "Event-Driven 서버 개발이 무엇인지, 비동기 I/O는 무엇인지 알겠다",
 						"나도 Netty로 개발해봤다", "어쩌면 실무에 응용해볼 수 있겠다"는 생각이 드셨으면 좋겠습니다.
 					</aside>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## 준비사항
+
+					* [IntelliJ 14 CE](https://www.jetbrains.com/idea/download/)
+					* [JDK8](https://jdk8.java.net/download.html)
+					* [Git 클라이언트](http://git-scm.com/downloads)
+					</script>
 				</section>
 
 				<section data-markdown>
@@ -85,78 +114,132 @@
 
 				<section data-markdown>
 					<script type="text/template">
-					## 준비사항
+					## <i class="fa fa-question-circle"></i> 다음의 공통점
 
-					* [IntelliJ 14 CE](https://www.jetbrains.com/idea/download/)
-					* [JDK8](https://jdk8.java.net/download.html)
-					* [Git 클라이언트](http://git-scm.com/downloads)
+					* [Nginx](http://nginx.org)
+					* [HAProxy](http://www.haproxy.org)
+					* [Memcached](http://memcached.org)
+					* [Redis](http://redis.io)
+					* [Node.js?](http://nodejs.org) <!-- ._element: class="fragment" -->
 					</script>
 				</section>
 
 				<section>
-					<h2>Netty.io의 소개</h2>
-					<p>
-						Netty is <em>an asynchronous event-driven network application framework</em>
-						for rapid development of maintainable high performance protocol servers &amp; clients.
-					</p>
-				</section>
+					<section data-markdown>
+						## 왜 Netty를 쓸까?
 
-				<section data-background="img/netty-components.png" data-background-color="#eee">
-				</section>
+						* 고성능
+						* 쓰기 편하다 (유연하고 쉽다)
 
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
-
-						Write content using inline or external Markdown.
-						Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-
-						```
-						<section data-markdown>
-						  ## Markdown support
-
-						  Write content using inline or external Markdown.
-						  Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
-
-				<section>
-					<section id="fragments">
-						<h2>Fragments</h2>
-						<p>Hit the next arrow...</p>
-						<p class="fragment">... to step through ...</p>
-						<p><span class="fragment">... a</span> <span class="fragment">fragmented</span> <span class="fragment">slide.</span></p>
-
-						<aside class="notes">
-							This slide has fragments which are also stepped through in the notes window.
-						</aside>
 					</section>
 					<section>
-						<h2>Fragment Styles</h2>
-						<p>There's different types of fragments, like:</p>
-						<p class="fragment grow">grow</p>
-						<p class="fragment shrink">shrink</p>
-						<p class="fragment roll-in">roll-in</p>
-						<p class="fragment fade-out">fade-out</p>
-						<p class="fragment current-visible">current-visible</p>
-						<p class="fragment highlight-red">highlight-red</p>
-						<p class="fragment highlight-blue">highlight-blue</p>
+						<h2>
+							얼마나 빠른가?
+							<small>
+								<a href="https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Java/netty/src/main/java/hello">netty</a>
+								<a href="https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Java/servlet/src/main/java/hello">servlet</a>
+							</small>
+						</h2>
+						<a href="http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext">
+							<img src="img/webframeworkbenchmarks.png"/>
+						</a>
+
+					</section>
+					<section data-markdown>
+						## Netty가 고성능인 이유
+
+						* Non-blocking Asynchronous 처리가 기본
+						* 적은 쓰레드로 많은 요청을 처리
+						* GC부하를 최소화하는 ByteBuffer 지원
+
+					</section>
+					<section data-markdown>
+						## Netty가 편한 이유
+
+						* 각종 네트워크 프로토콜 (코덱) 기본 지원
+						* 필요한 부분을 쉽게 조립해 쓸 수 있는 구조
+						* 멀티쓰레딩 처리 없이도...
 					</section>
 				</section>
 
-				<section id="transitions">
-					<h2>Transition Styles</h2>
-					<p>
-						You can select from different transitions, like: <br>
-						<a href="?transition=none#/transitions">None</a> -
-						<a href="?transition=fade#/transitions">Fade</a> -
-						<a href="?transition=slide#/transitions">Slide</a> -
-						<a href="?transition=convex#/transitions">Convex</a> -
-						<a href="?transition=concave#/transitions">Concave</a> -
-						<a href="?transition=zoom#/transitions">Zoom</a>
-					</p>
+				<section>
+					<section data-markdown>
+						## 동기와 비동기
+						* Synchronous vs. Asynchronous
+						* Blocking vs. Non-blocking
+
+						## 우리말로 하자면...
+						* 요청하고 결과를 계속 기다리기
+						* 완료되면 알려달라고 요청하고 다른 일 하기
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## <i class="fa fa-mobile"></i> 고객센터에 전화를 했는데...
+
+						<i class="fa fa-comment"></i> 모든 상담원이 통화중입니다.
+
+						1. 연결될 때까지 기다리기
+						1. 전화해달라는 기록 남기고 끊기
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## 동기 (Synchronous) 방식
+
+						<i class="fa fa-pause"></i> *Blocking* call
+
+						```java
+						// 동기 방식
+						void greeting(Context ctx) {
+							String req = ctx.readLine();
+							ctx.write("안녕, " + req);
+							System.out.println("완료");
+						}
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 비동기 (Asynchronous)
+
+						<i class="fa fa-bolt"></i> *Non-blocking* call
+
+						```java
+						// 비동기 방식
+						void greeting(Context ctx) {
+							ctx.readLine().done(line -> {
+								ctx.write("안녕, " + req);
+							});
+							System.out.println("완료");
+						}
+						```
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						## "왜 Netty를 쓸까?" 에 앞서...
+
+						1. Blocking I/O, Non-blocking I/O
+						1. Thread 기본
+						* a single-process, event-driven model considerably reduces the cost of context switch and the memory usage.
+					</section>
+
+					<section data-markdown>
+						## 왜 어려운 NIO를 쓸까?
+
+						> 동기(synchronous, blocking) I/O 방식으로는 다수의 커넥션을 받기 어렵기 때문입니다.
+
+						### 반대로 말하면...
+
+						많은 요청을 받거나 보낼 일이 없으면 굳이 알 필요 없을 수도 있습니다.
+					</section>
+
+				</section>
+				<section data-background="img/netty-components.png" data-background-color="#eee">
 				</section>
 
 				<section id="themes">
@@ -176,32 +259,6 @@
 						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/solarized.css'); return false;">Solarized</a> -
 						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/aewol.css'); return false;">애월</a>
 					</p>
-				</section>
-
-				<section>
-					<section data-background="#dddddd">
-						<h2>Slide Backgrounds</h2>
-						<p>
-							Set <code>data-background="#dddddd"</code> on a slide to change the background color. All CSS color formats are supported.
-						</p>
-						<a href="#" class="navigate-down">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png">
-						<h2>Image Backgrounds</h2>
-						<pre><code>&lt;section data-background="image.png"&gt;</code></pre>
-					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png" data-background-repeat="repeat" data-background-size="100px">
-						<h2>Tiled Backgrounds</h2>
-						<pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-					</section>
-					<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-color="#000000">
-						<div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
-							<h2>Video Backgrounds</h2>
-							<pre><code style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
-						</div>
-					</section>
 				</section>
 
 				<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
@@ -225,12 +282,9 @@
 					<pre><code data-trim contenteditable>
 function linkify( selector ) {
   if( supports3DTransforms ) {
-
     var nodes = document.querySelectorAll( selector );
-
     for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
       var node = nodes[i];
-
       if( !node.className ) {
         node.className += ' roll';
       }
@@ -239,16 +293,6 @@ function linkify( selector ) {
 }
 					</code></pre>
 					<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-				</section>
-
-				<section>
-					<h2>Speaker View</h2>
-					<p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
-					<p>Press the <em>S</em> key to try it out.</p>
-
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
 				</section>
 
 				<section>
@@ -272,32 +316,15 @@ Reveal.addEventListener( 'customevent', function() {
 					</code></pre>
 				</section>
 
-				<section>
-					<h2>Take a Moment</h2>
-					<p>
-						Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want to take distracting slides off the screen.
-					</p>
+				<section data-markdown>
+					<script type="text/template">
+						## 참고자료
+						* [Netty4 Intro](http://normanmaurer.me/presentations/2014-http-netty/slides.html)
+						* [Why Netty?](http://normanmaurer.me/presentations/2014-netflix-netty/slides.html)
+						* [The C10K problem](http://www.kegel.com/c10k.html)
+						* [Web Framework Benchmarks](http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext)
+					</script>
 				</section>
-
-				<section>
-					<h2>Much more</h2>
-					<ul>
-						<li>Right-to-left support</li>
-						<li><a href="https://github.com/hakimel/reveal.js#api">Extensive JavaScript API</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#auto-sliding">Auto-progression</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#parallax-background">Parallax backgrounds</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
-					</ul>
-				</section>
-
-				<section style="text-align: left;">
-					<h1>THE END</h1>
-					<p>
-						- <a href="http://slides.com">Try the online editor</a> <br>
-						- <a href="https://github.com/hakimel/reveal.js">Source code &amp; documentation</a>
-					</p>
-				</section>
-
 			</div>
 
 		</div>

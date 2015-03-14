@@ -13,27 +13,29 @@
 
 // Include theme-specific fonts
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
+@import url(https://fonts.googleapis.com/css?family=Neuton);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
 
 // Override theme settings (see ../template/settings.scss)
-$backgroundColor: rgb(38, 38, 38);
+$backgroundColor: invert(#000);
+$mainColor: invert(rgb(219, 219, 219));
+$headingColor: invert(rgb(117, 188, 185));
+$selectionBackgroundColor: invert(rgb(158, 193, 193));
+$linkColor: invert(rgb(115, 171, 210));
+$linkColorHover: invert(lighten( $linkColor, 20% ));
 
-$mainFont: 'Open Sans', sans-serif;
-$mainColor: rgb(219, 219, 219);
+$mainFont: 'Neuton', 'Open Sans', 'NanumMyeongjo', sans-serif;
+$headingFont: 'Montserrat', 'Noto Sans Korean', Impact, sans-serif;
 $mainFontWeight: bold;
-$headingColor: rgb(117, 188, 185);
-$linkColor: rgb(115, 171, 210);
-$linkColorHover: lighten( $linkColor, 20% );
-$headingFont: 'Montserrat', Impact, sans-serif;
 $headingFontWeight: bold;
 $headingTextShadow: none;
 $headingLetterSpacing: -0.03em;
 $headingTextTransform: none;
-$selectionBackgroundColor: rgb(158, 193, 193);
 $mainFontSize: 38px;
-$heading1Size: 3.2em;
-$heading2Size: 2.2em;
-$heading3Size: 1.7em;
+$heading1Size: 2.4em;
+$heading2Size: 1.5em;
+$heading3Size: 1.2em;
 $heading4Size: 1.00em;
 
 
@@ -41,28 +43,75 @@ $heading4Size: 1.00em;
 @import "../template/theme";
 // ---------------------------------------------
 
-.reveal h2 {
-  border-bottom: 3px solid $headingColor;
-}
+.reveal {
+  font-weight: $mainFontWeight;
 
-.reveal section {
-  text-align: left;
-}
+  h2 {
+    border-bottom: 3px solid $headingColor;
+  }
 
-section.cover {
-  border-top: 5px dotted $headingColor;
-}
+  section {
+    text-align: left;
+  }
 
-.cover h2, .cover h3 {
-  color: $mainColor;
-}
+  strong, b {
+    font-weight: bolder;
+  }
 
-.cover .name {
-  float: right;
-  margin-top: 30%;
-}
+  blockquote {
+    background-color: #444;
+    border-radius: 5px;
+    font-style: normal;
+    margin: 10px auto;
+    width: 80%;
+    padding: 10px 5px;
+  }
 
-.reveal .fa {
-  font-family: 'FontAwesome';
-  font-style: normal;
+  section.cover {
+    border-top: 5px dotted $headingColor;
+  }
+
+  ul, ol {
+    margin-bottom: 1em;
+  }
+
+  li {
+    line-height: 1.5;
+  }
+
+  .cover h2, .cover h3 {
+    color: $mainColor;
+  }
+
+  .cover .name {
+    float: right;
+    text-align: right;
+    margin-top: 30%;
+  }
+
+  .fa {
+    font-family: 'FontAwesome';
+    font-style: normal;
+  }
+
+  pre {
+    width: 95%;
+  }
+
+  pre, code {
+    font-family: 'Inconsolata';
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+
+  pre code {
+    max-height: 450px;
+    border-radius: 5px;
+  }
+
+  pre ::selection {
+    color: #000;
+    background-color: #ffffff;
+    text-shadow: none;
+  }
 }
