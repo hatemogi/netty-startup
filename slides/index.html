@@ -42,7 +42,7 @@
 			<div class="slides">
 				<section class="cover">
 					<h1>Netty 시작하기 (1)</h1>
-					<h3>고성능 비동기 네트워크 프레임워크</h3>
+					<h3>고성능 네트워크 애플리케이션 프레임워크</h3>
 					<p class="name">
 						<a href="http://hatemogi.com">김대현</a><br/>
 						<a href="http://twitter.com/hatemagi">@hatemogi</a>
@@ -60,56 +60,69 @@
 					</h2>
 					<p data-markdown>
 					* 2015, Netty 기반 서버 개발
-					* 2013, Redis SaaS 서비스, 160+ VM
+					* 2013, 사내 Redis SaaS, 160+ VM
+					* 2010, 클라우드, 네트워크 파일동기화 프로토콜 설계
 					* 2010, MyPeople, 네트워크 아키텍쳐 설계
 					* 2009, Cafe 채팅 부하분산 서버 개발
-					* 2004, Cafe, 한줄메모장 개발, 일일 3억 PV
+					* 2004, Cafe 한줄메모장 개발, 일일 3억 PV
 					</p>
 				</section>
 
 				<section>
-					<h2>과정</h2>
-					<p>
-						<ol>
-							<li>Netty의 기본 설명</li>
-							<li>문제 풀이</li>
-							<li>예제 개발</li>
-						</ol>
-					</p>
-					<h2>목표</h2>
-					<p>
-						<ul>
-							<li>Event-Driven, 비동기 I/O가 뭔지 알겠다</li>
-							<li>Netty로 개발 해봤다</li>
-							<li>(조금 더 공부하면) 실무에 쓸 수 있겠다</li>
-						</ul>
-					</p>
-					<aside class="notes">
-						이 과정의 목표입니다. Netty의 기본을 설명하며, 중간중간 문제풀이로 이해를 돕고, 직접 예제를 개발해보는 과정을 통해,
-						오늘 4시간을 잘 보내고나면, "Event-Driven 서버 개발이 무엇인지, 비동기 I/O는 무엇인지 알겠다",
-						"나도 Netty로 개발해봤다", "어쩌면 실무에 응용해볼 수 있겠다"는 생각이 드셨으면 좋겠습니다.
-					</aside>
-				</section>
+					<section>
+						<h2>과정</h2>
+						<p>
+							<ol>
+								<li>Netty의 기본 설명</li>
+								<li>문제 풀이</li>
+								<li>예제 이해 / 실습 개발</li>
+							</ol>
+						</p>
+						<h2>목표</h2>
+						<p>
+							<ul>
+								<li>Event-Driven, 비동기 I/O 이해</li>
+								<li>Netty로 개발 경험</li>
+								<li>언젠가 실무에 응용</li>
+							</ul>
+						</p>
+						<aside class="notes">
+							이 과정의 목표입니다. Netty의 기본을 설명하며, 중간중간 문제풀이로 이해를 돕고, 직접 예제를 개발해보는 과정을 통해,
+							오늘 4시간을 잘 보내고나면, "Event-Driven 서버 개발이 무엇인지, 비동기 I/O는 무엇인지 알겠다",
+							"나도 Netty로 개발해봤다", "어쩌면 실무에 응용해볼 수 있겠다"는 생각이 드셨으면 좋겠습니다.
+						</aside>
+					</section>
 
-				<section data-markdown>
-					<script type="text/template">
-					## 준비사항
+					<section data-markdown>
+						<script type="text/template">
+						## 준비사항
 
-					* [IntelliJ 14 CE](https://www.jetbrains.com/idea/download/)
-					* [JDK8](https://jdk8.java.net/download.html)
-					* [Git 클라이언트](http://git-scm.com/downloads)
-					</script>
-				</section>
+						* [IntelliJ 14 CE](https://www.jetbrains.com/idea/download/)
+						* [JDK8](https://jdk8.java.net/download.html)
+						* [Git 클라이언트](http://git-scm.com/downloads)
+						</script>
+					</section>
 
-				<section data-markdown>
-					<script type="text/template">
-					## 4시간 진행순서
+					<section data-markdown>
+						<script type="text/template">
+						## 4시간 진행순서
 
-					1. Netty 소개, 비동기 처리 기본, 첫 서버 개발
-					1. Netty와 유닛테스트, 대용량 서버 개발
-					1. Netty와 함께하는 멀티쓰레딩
-					1. 모두 함께 개발하는 Netty 클라이언트와 서버
-					</script>
+						1. Netty 소개, 비동기 처리 기본, 첫 서버 개발
+						1. Netty와 유닛테스트, 대용량 서버 개발
+						1. Netty와 함께하는 멀티쓰레딩
+						1. 모두 함께 개발하는 Netty 클라이언트와 서버
+						</script>
+					</section>
+
+					<section>
+						<h2>각 시간 진행순서</h2>
+						<img src="img/pair.jpg" style="float: right; width: 60%;"/>
+						<p data-markdown>
+						1. 설명
+						1. 예제 설명 / 데모
+						1. 실습 (pair-)
+						</p>
+					</section>					
 				</section>
 
 				<section data-markdown>
@@ -140,7 +153,7 @@
 								<a href="https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Java/servlet/src/main/java/hello">servlet</a>
 							</small>
 						</h2>
-						<a href="http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext">
+						<a href="http://www.techempower.com/benchmarks/#section=data-r9&amp;hw=i7&amp;test=plaintext">
 							<img src="img/webframeworkbenchmarks.png"/>
 						</a>
 
@@ -150,8 +163,13 @@
 
 						* Non-blocking Asynchronous 처리가 기본
 						* 적은 쓰레드로 많은 요청을 처리
-						* GC부하를 최소화하는 ByteBuffer 지원
+						* GC부하를 최소화하는 Zero-copy ByteBuf 지원
 
+						* You can define your buffer type if necessary.
+						* Transparent zero copy is achieved by built-in composite buffer type.
+						* A dynamic buffer type is provided out-of-the-box, whose capacity is expanded on demand, just like StringBuffer.
+ 						* There's no need to call the flip() method anymore.
+						* It is often faster than ByteBuffer.
 					</section>
 					<section data-markdown>
 						## Netty가 편한 이유
@@ -181,12 +199,19 @@
 
 						1. 연결될 때까지 기다리기
 						1. 전화해달라는 기록 남기고 끊기
+
+						## <i class="fa fa-question-circle"></i> 동기 or 비동기
+
+						* <i class="fa fa-coffee"></i> 커피 주문
+						* 지하철 이용, 자가 운전
+						* 업무요청 메일, 업무문의 전화
+						* 팀장의 업무지시
 						</script>
 					</section>
 
 					<section data-markdown>
 						<script type="text/template">
-						## 동기 (Synchronous) 방식
+						## 동기 (Synchronous) 코드
 
 						<i class="fa fa-pause"></i> *Blocking* call
 
@@ -202,7 +227,7 @@
 					</section>
 					<section data-markdown>
 						<script type="text/template">
-						## 비동기 (Asynchronous)
+						## 비동기 (Asynchronous) 코드
 
 						<i class="fa fa-bolt"></i> *Non-blocking* call
 
@@ -220,12 +245,64 @@
 				</section>
 
 				<section>
+					<section>
+						<h2>Event-Driven Programming</h2>
+						<blockquote>
+							In computer programming, event-driven programming is a programming paradigm in which the flow of the program is determined by events such as user actions (mouse clicks, key presses), sensor outputs, or messages from other programs/threads. Event-driven programming is the dominant paradigm used in graphical user interfaces and other applications (e.g. JavaScript web applications) that are centered on performing certain actions in response to user input.
+							<cite><a href="http://en.wikipedia.org/wiki/Event-driven_programming">Wikipedia</a></cite>
+						</blockquote>
+					</section>
+
+					<section>
+						<h2>사건 기반 프로그래밍</h2>
+						<blockquote>
+							사건 기반 프로그래밍(영어: Event-driven programming; EDP)은 비주얼 베이직과 같이, 사용자의 명령·마우스 클릭·다른 프로그램의 메시지·키보드 글쇠 입력 등의 ‘사건’에 따라, 제어 흐름이 결정되어 일을 하도록 하게끔 만들어진 프로그래밍 언어 방식을 뜻한다.<cite><a href="http://ko.wikipedia.org/wiki/사건_기반_프로그래밍">위키백과</a></cite>
+						</blockquote>
+					</section>
+
+					<section>
+							* a single-process, event-driven model considerably reduces the cost of context switch and the memory usage.
+
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## 등잔 밑의 Event-Driven 코드
+
+						```javascript
+						$("button").on("click", function(event) {
+							console.log(event);
+							alert("클릭");
+						});
+						```
+
+						* 자바스크립트
+						* iOS 앱
+						* Android 앱
+						* 데스크탑 애플리케이션
+						</script>
+					</section>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## <i class="fa fa-question-circle"></i> True or False
+
+					* 비동기와 Event-driven은 같은 뜻이다.
+					* Event-Driven은 클라이언트에 적합하다.
+					* 비동기식 싱글쓰레드에서는 Blocking Call을 할 수 없다.
+					</script>
+				</section>
+
+				<section>
 					<section data-markdown>
 						## "왜 Netty를 쓸까?" 에 앞서...
 
 						1. Blocking I/O, Non-blocking I/O
 						1. Thread 기본
-						* a single-process, event-driven model considerably reduces the cost of context switch and the memory usage.
+					</section>
+					<section data-markdown>
+					
 					</section>
 
 					<section data-markdown>
@@ -239,9 +316,111 @@
 					</section>
 
 				</section>
-				<section data-background="img/netty-components.png" data-background-color="#eee">
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						## ChannelHandler
+						```
+						public interface ChannelHandler
+						```
+						Handles or intercepts a ```ChannelInboundInvoker``` or ```ChannelOutboundInvoker``` operation, and forwards it to the next handler in a ```ChannelPipeline```.
+						</script>
+					</section>
 				</section>
+				<section>
+					<section data-markdown>
+						## DiscardServer
 
+						* DiscardServer.java
+						* DiscardServerHandler.java
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## DiscardServer.java
+						```java
+						public final class DiscardServer {
+						    public static void main(String[] args) throws Exception {
+						        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+						        EventLoopGroup workerGroup = new NioEventLoopGroup();
+						        try {
+						            ServerBootstrap b = new ServerBootstrap();
+						            b.group(bossGroup, workerGroup)
+						                    .channel(NioServerSocketChannel.class)
+						                    .handler(new LoggingHandler(LogLevel.INFO))
+						                    .childHandler(new ChannelInitializer<SocketChannel>() {
+						                        @Override
+						                        public void initChannel(SocketChannel ch) {
+						                            ChannelPipeline p = ch.pipeline();
+						                            p.addLast(new DiscardServerHandler());
+						                        }
+						                    });
+						            ChannelFuture f = b.bind(8009).sync();
+						            f.channel().closeFuture().sync();
+						        } finally {
+						            workerGroup.shutdownGracefully();
+						            bossGroup.shutdownGracefully();
+						        }
+						    }
+						}
+						```
+						</script>
+					</section>
+
+					<section data-markdown class="code">
+						<script type="text/template">
+						## DiscardServerHandler.java
+						```java
+						public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
+							@Override
+							public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+								ByteBuf buf = (ByteBuf) msg;
+								try {
+									// discard
+								} finally {
+									buf.release();
+								}
+							}
+							@Override
+							public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+								cause.printStackTrace();
+								ctx.close();
+							}
+						}
+						```
+						</script>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+					## EmbeddedChannel
+					```java
+					public class EmbeddedChannel extends AbstractChannel {
+						public EmbeddedChannel(ChannelHandler... handlers) {}
+
+						public Object readInbound() { ... }
+						public Object readOutbound() { ... }
+						public boolean writeInbound(Object... msgs) { ... }
+						public boolean writeOutbound(Object... msgs) { ... }
+
+						public void checkException() { ... }
+					}
+					```
+					</section>
+					<section>
+					<svg width="100%" height="80%" viewBox="0 0 144 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>Untitled</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <rect id="Rectangle-1" stroke="#979797" fill="#D8D8D8" sketch:type="MSShapeGroup" x="1" y="2" width="142" height="57" rx="8"></rect>
+        <text id="Outbound-Handler" sketch:type="MSTextLayer" font-family="Inconsolata-g" font-size="12" font-weight="473" fill="#000000">
+            <tspan x="14" y="34">Outbound Handler</tspan>
+        </text>
+    </g>
+</svg>
+					</section>
+				</section>
 				<section id="themes">
 					<h2>Themes</h2>
 					<p>
@@ -278,24 +457,6 @@
 				</section>
 
 				<section>
-					<h2>Pretty Code</h2>
-					<pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
-    var nodes = document.querySelectorAll( selector );
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-      if( !node.className ) {
-        node.className += ' roll';
-      }
-    }
-  }
-}
-					</code></pre>
-					<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-				</section>
-
-				<section>
 					<h2>Global State</h2>
 					<p>
 						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
@@ -309,7 +470,7 @@ function linkify( selector ) {
 					<p>
 						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
 					</p>
-					<pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
+					<pre><code class="javascript" data-trim contenteditable>
 Reveal.addEventListener( 'customevent', function() {
 	console.log( '"customevent" has fired' );
 } );
@@ -319,10 +480,12 @@ Reveal.addEventListener( 'customevent', function() {
 				<section data-markdown>
 					<script type="text/template">
 						## 참고자료
+						* [User guide for Netty 4.x](http://netty.io/wiki/user-guide-for-4.x.html)
 						* [Netty4 Intro](http://normanmaurer.me/presentations/2014-http-netty/slides.html)
 						* [Why Netty?](http://normanmaurer.me/presentations/2014-netflix-netty/slides.html)
 						* [The C10K problem](http://www.kegel.com/c10k.html)
 						* [Web Framework Benchmarks](http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext)
+						* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html기)
 					</script>
 				</section>
 			</div>

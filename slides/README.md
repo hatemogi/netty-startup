@@ -28,6 +28,20 @@ Netty는 JAVA환경에서 고성능 네트워크 서버를 개발할 수 있는 
 * JDK8
 
 
+## 설명할 것들 모두 나열
+
+* 메모리 모델 (Reference Counted Buffers)
+* 쓰레드 모델 (I/O처리는 한 쓰레드가 담당함)
+* 주요 클래스 (ChannelPipeline, ChannelHandler, ChannelHandlerContext, EventLoop, EventLoopGroup)
+* 네티에서 유닛 테스트
+* ChannelHandler.channelReadComplete는 언제 불리는가? 그리고 각각 메소드가 불리는 시점
+* [ByteBuf](http://netty.io/4.0/api/index.html?io/netty/buffer/ByteBuf.html) 마지막에 쓴 메소드가 해제하기
+* msgpack codec을 만들어볼까?
+* ChannelFuture, ChannelPromise 활용하기
+* ChannelHandler.Shareable
+* 타임아웃 처리 넣기
+* AttributeMap
+* TLS 사용
 
 ## 저작권
 
