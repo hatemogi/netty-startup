@@ -1,5 +1,5 @@
 // modified from io.netty.example.echo
-package nettystartup.h2;
+package nettystartup.h2.echo;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;

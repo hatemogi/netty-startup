@@ -1,5 +1,5 @@
 // modified from io.netty.nettystartup.h1.discard
-package nettystartup.h2;
+package nettystartup.h2.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -20,7 +20,7 @@ public final class EchoServer {
 
             // 여기를 채워 주세요
 
-            ChannelFuture f = b.bind(8010).sync();
+            ChannelFuture f = b.bind(8020).sync();
             f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();

@@ -3,6 +3,7 @@ package nettystartup.h2;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
+import nettystartup.h2.echo.EchoServerHandler;
 import org.junit.Test;
 
 import static io.netty.util.ReferenceCountUtil.releaseLater;

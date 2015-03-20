@@ -18,14 +18,9 @@ public final class DiscardServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch) {
-                            ChannelPipeline p = ch.pipeline();
-                            p.addLast(new DiscardServerHandler());
-                        }
-                    });
-            ChannelFuture f = b.bind(8009).sync();
+                    .childHandler(new DiscardServerHandler());
+            ChannelFuture f = b.bind(8010).sync();
+            System.err.println("Ready for 0.0.0.0:8010");
             f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();

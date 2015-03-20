@@ -108,9 +108,9 @@
 						## 4시간 진행순서
 
 						1. Netty 소개, 비동기 처리 기본, 첫 서버 개발
-						1. Netty와 유닛테스트, 대용량 서버 개발
-						1. Netty와 함께하는 멀티쓰레딩
-						1. 모두 함께 개발하는 Netty 클라이언트와 서버
+						1. Netty와 단위테스트, 채팅 서버 개발
+						1. Netty와 멀티쓰레드, HTTP 서버 개발
+						1. 각종 코덱과 WebSocket, 웹채팅 개발
 						</script>
 					</section>
 
@@ -122,7 +122,7 @@
 						1. 예제 설명 / 데모
 						1. 실습 (pair-)
 						</p>
-					</section>					
+					</section>
 				</section>
 
 				<section data-markdown>
@@ -133,7 +133,7 @@
 					* [HAProxy](http://www.haproxy.org)
 					* [Memcached](http://memcached.org)
 					* [Redis](http://redis.io)
-					* [Node.js?](http://nodejs.org) <!-- ._element: class="fragment" -->
+					* [Node.js?](http://nodejs.org)
 					</script>
 				</section>
 
@@ -164,12 +164,6 @@
 						* Non-blocking Asynchronous 처리가 기본
 						* 적은 쓰레드로 많은 요청을 처리
 						* GC부하를 최소화하는 Zero-copy ByteBuf 지원
-
-						* You can define your buffer type if necessary.
-						* Transparent zero copy is achieved by built-in composite buffer type.
-						* A dynamic buffer type is provided out-of-the-box, whose capacity is expanded on demand, just like StringBuffer.
- 						* There's no need to call the flip() method anymore.
-						* It is often faster than ByteBuffer.
 					</section>
 					<section data-markdown>
 						## Netty가 편한 이유
@@ -260,11 +254,6 @@
 						</blockquote>
 					</section>
 
-					<section>
-							* a single-process, event-driven model considerably reduces the cost of context switch and the memory usage.
-
-					</section>
-
 					<section data-markdown>
 						<script type="text/template">
 						## 등잔 밑의 Event-Driven 코드
@@ -288,48 +277,15 @@
 					<script type="text/template">
 					## <i class="fa fa-question-circle"></i> True or False
 
-					* 비동기와 Event-driven은 같은 뜻이다.
-					* Event-Driven은 클라이언트에 적합하다.
-					* 비동기식 싱글쓰레드에서는 Blocking Call을 할 수 없다.
+					* 비동기와 Event-driven은 같은 뜻이다?
+					* Event-Driven은 클라이언트에 적합하다?
+					* 비동기식 싱글 쓰레드 앱에서는 Blocking Call을 할 수 없다?
 					</script>
 				</section>
 
 				<section>
 					<section data-markdown>
-						## "왜 Netty를 쓸까?" 에 앞서...
-
-						1. Blocking I/O, Non-blocking I/O
-						1. Thread 기본
-					</section>
-					<section data-markdown>
-					
-					</section>
-
-					<section data-markdown>
-						## 왜 어려운 NIO를 쓸까?
-
-						> 동기(synchronous, blocking) I/O 방식으로는 다수의 커넥션을 받기 어렵기 때문입니다.
-
-						### 반대로 말하면...
-
-						많은 요청을 받거나 보낼 일이 없으면 굳이 알 필요 없을 수도 있습니다.
-					</section>
-
-				</section>
-				<section>
-					<section data-markdown>
-						<script type="text/template">
-						## ChannelHandler
-						```
-						public interface ChannelHandler
-						```
-						Handles or intercepts a ```ChannelInboundInvoker``` or ```ChannelOutboundInvoker``` operation, and forwards it to the next handler in a ```ChannelPipeline```.
-						</script>
-					</section>
-				</section>
-				<section>
-					<section data-markdown>
-						## DiscardServer
+						## 첫 예제: DiscardServer
 
 						* DiscardServer.java
 						* DiscardServerHandler.java
@@ -347,13 +303,7 @@
 						            b.group(bossGroup, workerGroup)
 						                    .channel(NioServerSocketChannel.class)
 						                    .handler(new LoggingHandler(LogLevel.INFO))
-						                    .childHandler(new ChannelInitializer<SocketChannel>() {
-						                        @Override
-						                        public void initChannel(SocketChannel ch) {
-						                            ChannelPipeline p = ch.pipeline();
-						                            p.addLast(new DiscardServerHandler());
-						                        }
-						                    });
+						                    .childHandler(new DiscardServerHandler());
 						            ChannelFuture f = b.bind(8009).sync();
 						            f.channel().closeFuture().sync();
 						        } finally {
@@ -390,7 +340,23 @@
 						</script>
 					</section>
 				</section>
+
 				<section>
+					<section data-markdown>
+						<script type="text/template">
+						## ChannelHandler
+						```
+						public interface ChannelHandler
+						```
+						Handles or intercepts a ```ChannelInboundInvoker``` or ```ChannelOutboundInvoker``` operation, and forwards it to the next handler in a ```ChannelPipeline```.
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+					## Netty와 유닛테스팅
+					</section>
 					<section data-markdown>
 					## EmbeddedChannel
 					```java
@@ -406,75 +372,6 @@
 					}
 					```
 					</section>
-					<section>
-					<svg width="100%" height="80%" viewBox="0 0 144 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-    <title>Untitled</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <rect id="Rectangle-1" stroke="#979797" fill="#D8D8D8" sketch:type="MSShapeGroup" x="1" y="2" width="142" height="57" rx="8"></rect>
-        <text id="Outbound-Handler" sketch:type="MSTextLayer" font-family="Inconsolata-g" font-size="12" font-weight="473" fill="#000000">
-            <tspan x="14" y="34">Outbound Handler</tspan>
-        </text>
-    </g>
-</svg>
-					</section>
-				</section>
-				<section id="themes">
-					<h2>Themes</h2>
-					<p>
-						reveal.js comes with a few themes built in: <br>
-						<!-- Hacks to swap themes after the page has loaded. Not flexible and only intended for the reveal.js demo deck. -->
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/black.css'); return false;">Black (default)</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/white.css'); return false;">White</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/league.css'); return false;">League</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/sky.css'); return false;">Sky</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/beige.css'); return false;">Beige</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/simple.css'); return false;">Simple</a> <br>
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/serif.css'); return false;">Serif</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/night.css'); return false;">Night</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/moon.css'); return false;">Moon</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/solarized.css'); return false;">Solarized</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/aewol.css'); return false;">애월</a>
-					</p>
-				</section>
-
-				<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
-					<h2>Background Transitions</h2>
-					<p>
-						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
-					</p>
-					<pre><code>Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
-				</section>
-
-				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
-					<h2>Background Transitions</h2>
-					<p>
-						You can override background transitions per-slide.
-					</p>
-					<pre><code style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
-				</section>
-
-				<section>
-					<h2>Global State</h2>
-					<p>
-						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-						will be added as a class to the document element when the slide is open. This lets you
-						apply broader style changes, like switching the page background.
-					</p>
-				</section>
-
-				<section data-state="customevent">
-					<h2>State Events</h2>
-					<p>
-						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-					</p>
-					<pre><code class="javascript" data-trim contenteditable>
-Reveal.addEventListener( 'customevent', function() {
-	console.log( '"customevent" has fired' );
-} );
-					</code></pre>
 				</section>
 
 				<section data-markdown>
