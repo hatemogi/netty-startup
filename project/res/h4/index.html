@@ -9,7 +9,7 @@
   <style>
     body {
       margin: 10px auto;
-      max-width: 900px;
+      max-width: 800px;
     }
     #messages {
       width: 100%;
@@ -22,7 +22,20 @@
     }
     #messages cite {
       display: inline-block;
+      vertical-align: middle;
+      overflow: hidden;
       width: 80px;
+      height: 20px;
+    }
+    #messages .info {
+      color: #55f;
+    }
+    aside {
+      padding: 5px;
+      box-sizing: border-box;
+      border: 1px solid #eee;
+      height: 300px;
+      overflow-y: scroll;
     }
   </style>
 </head>
@@ -35,9 +48,9 @@
     </h2>
   </header>
   <main class="pure-g">
-    <section class="pure-u-4-5">
+    <section class="pure-u-3-4">
       <div id="messages" class="pure-u-1">
-        <div ng-repeat="msg in messages" ng-class="message-{{msg.type}}">
+        <div ng-repeat="msg in messages" ng-class="msg.type">
           <cite>{{ msg.nick }}</cite>
           {{ msg.text }}
         </div>
@@ -45,7 +58,7 @@
       </div>
       <form class="pure-form pure-g">
         <div class="pure-u-1-5">
-          <input class="pure-input-1" type="text" placeholder="대화명" ng-model="nickname" readonly>
+          <input class="pure-input-1" type="text" placeholder="대화명" ng-model="nickname" ng-blur="change_nick()">
         </div>
         <div class="pure-u-3-5">
           <input class="pure-input-1" type="text" name="text" placeholder="메시지" autofocus ng-model="text" ng-keydown="keydown($event)">
@@ -57,14 +70,11 @@
         </div>
       </form>
     </section>
-    <aside class="pure-u-1-5">
-      <h3>참가자</h3>
-      <ul>
-        <li ng-repeat="nick in attendees">
+    <aside class="pure-u-1-4">
+        <div ng-repeat="nick in attendees">
           {{nick}}
-          <sup ng-show="nick == nickname">나</sup>
-        </li>
-      </ul>
+          <i ng-show="nick == prevnick" class="fa fa-user"></i>
+        </div>
     </aside>
   </main>
 
@@ -84,7 +94,6 @@
       };
       $scope.messages = [];
       $scope.attendees = [];
-      $scope.nickname = "미정";
       var ws = $window.ws = new WebSocket("ws://" + $window.location.host + "/chat");
       var message = function(m) {
         $scope.messages.push(m);
@@ -107,18 +116,30 @@
           a.push(nickname);
           if (command == "HELO") {
             message({type: "info", text: "환영합니다, " + nickname + "님!"});
-            $scope.nickname = nickname;
+            $scope.prevnick = $scope.nickname = nickname;
           } else if (command == "JOIN") {
             message({type: "info", text: nickname + "님이 들어오셨습니다."});
           }
         } else if (command == "LEFT") {
           a.splice(a.indexOf(nickname), 1);
           message({type: "info", text: nickname + "님이 나가셨습니다."});
+        } else if (command == "NICK") {
+          if (nickname == $scope.prevnick) {
+            message({type: "info", text: "대화명이 바뀌었습니다: " + text});
+            $scope.prevnick = $scope.nickname = text;
+          } else {
+            message({type: "info", text: nickname + "님이 대화명을 바꾸셨습니다: " + text});
+          }
+          a.splice(a.indexOf(nickname), 1);
+          a.push(text);
         }
         $scope.$apply();
       };
       ws.onopen = function() { console.log("ws open"); $scope.connected = true;};
-      ws.onclose = function() { console.log("ws close"); $scope.connected = false;};
+      ws.onclose = function() {
+        console.log("ws close"); $scope.connected = false;
+        message({type: "info", text: "연결이 끊겼습니다."});
+      };
       $scope.send = function() {
         if ($scope.text && $scope.text.length > 0) {
           ws.send("SEND " + $scope.text);
@@ -133,7 +154,12 @@
           return false;
         }
       };
-
+      $scope.change_nick = function() {
+        if ($scope.nickname == "") $scope.nickname = $scope.prevnick;
+        if ($scope.prevnick != $scope.nickname) {
+          ws.send("NICK " + $scope.nickname);
+        }
+      };
     });
   </script>
 </body>

@@ -29,6 +29,7 @@ public class NettyStartupUtil {
     }
 
     public static void runServer(int port, ChannelHandler childHandler) throws Exception {
-        runServer(port, childHandler, b -> {});
+        runServer(port, childHandler, b -> {
+        });
     }
 }

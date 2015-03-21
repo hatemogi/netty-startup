@@ -1,6 +1,6 @@
 package nettystartup.h2.chat;
 
-import io.netty.channel.*;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
