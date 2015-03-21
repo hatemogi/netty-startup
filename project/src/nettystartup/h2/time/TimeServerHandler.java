@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 
 @ChannelHandler.Sharable
-public class TimeServerHandler extends ChannelInboundHandlerAdapter {
+class TimeServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ByteBuf time = ctx.alloc().buffer(4);

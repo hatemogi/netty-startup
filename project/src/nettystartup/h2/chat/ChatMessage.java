@@ -20,7 +20,7 @@ public class ChatMessage {
     }
 
     public String toString() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(command);
         if (nickname != null) b.append(":").append(nickname);
         if (text != null) b.append(" ").append(text);

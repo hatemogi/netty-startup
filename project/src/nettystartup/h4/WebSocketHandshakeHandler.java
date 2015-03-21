@@ -7,10 +7,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 
 import java.io.IOException;
 
-public class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private final String wsPath;
     private ChannelHandler wsHandler;
-    private WebSocketServerHandshaker handshaker;
 
     public WebSocketHandshakeHandler(String wsPath, ChannelHandler wsHandler) {
         this.wsPath = wsPath;
@@ -26,13 +25,13 @@ public class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullH
         }
     }
 
-    private void handshakeWebSocket(ChannelHandlerContext ctx, FullHttpRequest req) throws IOException {
+    private void handshakeWebSocket(ChannelHandlerContext ctx, FullHttpRequest req) {
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(wsPath, null, true);
-        handshaker = wsFactory.newHandshaker(req);
-        if (handshaker == null) {
+        WebSocketServerHandshaker h = wsFactory.newHandshaker(req);
+        if (h == null) {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {
-            handshaker.handshake(ctx.channel(), req).addListener((ChannelFuture f) -> {
+            h.handshake(ctx.channel(), req).addListener((ChannelFuture f) -> {
                 // replace the handler when done handshaking
                 ChannelPipeline p = f.channel().pipeline();
                 p.replace(WebSocketHandshakeHandler.class, "wsHandler", wsHandler);

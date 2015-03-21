@@ -7,7 +7,7 @@ import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> {
-    static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     static final AttributeKey<String> nickAttr = AttributeKey.newInstance("nickname");
     static final NicknameProvider nicknameProvider = new NicknameProvider();
 

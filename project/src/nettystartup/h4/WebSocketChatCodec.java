@@ -7,8 +7,7 @@ import nettystartup.h2.chat.ChatMessage;
 
 import java.util.List;
 
-public class WebSocketChatCodec extends MessageToMessageCodec<TextWebSocketFrame, ChatMessage> {
-
+class WebSocketChatCodec extends MessageToMessageCodec<TextWebSocketFrame, ChatMessage> {
     @Override
     protected void encode(ChannelHandlerContext ctx, ChatMessage msg, List<Object> out) throws Exception {
         out.add(new TextWebSocketFrame(msg.toString()));

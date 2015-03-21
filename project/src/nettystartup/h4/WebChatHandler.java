@@ -4,8 +4,7 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.*;
 import nettystartup.h2.chat.ChatServerHandler;
 
-public class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-
+class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         ChatServerHandler chatHandler = new ChatServerHandler();

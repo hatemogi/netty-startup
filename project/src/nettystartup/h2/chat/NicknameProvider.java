@@ -33,10 +33,9 @@ public class NicknameProvider {
         return n;
     }
 
-    public String reserve(String custom) {
+    public void reserve(String custom) {
         if (!available(custom)) throw new RuntimeException("not available name");
         occupied.add(custom);
-        return custom;
     }
 
     public NicknameProvider release(String nick) {
