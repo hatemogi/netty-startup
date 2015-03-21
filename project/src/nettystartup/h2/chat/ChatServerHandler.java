@@ -9,28 +9,33 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> {
     static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     static final AttributeKey<String> nickAttr = AttributeKey.newInstance("nickname");
-    static final NicknameProvider nicknamePool = new NicknameProvider();
+    static final NicknameProvider nicknameProvider = new NicknameProvider();
 
     @Override
-    public void handlerAdded(ChannelHandlerContext ctx) {
-        String nick = nicknamePool.reserve();
-        if (nick == null) {
-            ctx.writeAndFlush(M("ERR", "sorry, no more names for you"))
-                    .addListener(ChannelFutureListener.CLOSE);
-        } else {
-            bindNickname(ctx, nick);
-            channels.forEach(c -> ctx.write(M("HAVE", nickname(c))));
-            channels.writeAndFlush(M("JOIN", nick));
-            channels.add(ctx.channel());
-            ctx.writeAndFlush(M("HELO", nick));
-        }
+    public void channelActive(ChannelHandlerContext ctx) {
+        helo(ctx.channel());
     }
 
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) {
         channels.remove(ctx.channel());
         channels.writeAndFlush(M("LEFT", nickname(ctx)));
-        nicknamePool.release(nickname(ctx));
+        nicknameProvider.release(nickname(ctx));
+    }
+
+    public void helo(Channel ch) {
+        if (nickname(ch) != null) return; // already done;
+        String nick = nicknameProvider.reserve();
+        if (nick == null) {
+            ch.writeAndFlush(M("ERR", "sorry, no more names for you"))
+                    .addListener(ChannelFutureListener.CLOSE);
+        } else {
+            bindNickname(ch, nick);
+            channels.forEach(c -> ch.write(M("HAVE", nickname(c))));
+            channels.writeAndFlush(M("JOIN", nick));
+            channels.add(ch);
+            ch.writeAndFlush(M("HELO", nick));
+        }
     }
 
     @Override
@@ -69,9 +74,9 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
     private void changeNickname(ChannelHandlerContext ctx, ChatMessage msg) {
         String newNick = msg.text.replace(" ", "_").replace(":", "-");
         String prev = nickname(ctx);
-        if (!newNick.equals(prev) && nicknamePool.available(newNick)) {
-            nicknamePool.release(prev).reserve(newNick);
-            bindNickname(ctx, newNick);
+        if (!newNick.equals(prev) && nicknameProvider.available(newNick)) {
+            nicknameProvider.release(prev).reserve(newNick);
+            bindNickname(ctx.channel(), newNick);
             channels.writeAndFlush(M("NICK", prev, newNick));
         } else {
             ctx.write(M("ERR", null, "couldn't change"));
@@ -93,8 +98,8 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
         }
     }
 
-    private void bindNickname(ChannelHandlerContext ctx, String nickname) {
-        ctx.channel().attr(nickAttr).set(nickname);
+    private void bindNickname(Channel c, String nickname) {
+        c.attr(nickAttr).set(nickname);
     }
 
     private String nickname(Channel c) {

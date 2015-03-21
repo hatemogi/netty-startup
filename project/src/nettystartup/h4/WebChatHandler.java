@@ -8,9 +8,11 @@ public class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> 
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        ChatServerHandler chatHandler = new ChatServerHandler();
         ctx.pipeline()
                 .addAfter("wsHandler", "wsCodec", new WebSocketChatCodec())
-                .addAfter("wsCodec", "chatHandler", new ChatServerHandler());
+                .addAfter("wsCodec", "chatHandler", chatHandler);
+        chatHandler.helo(ctx.channel());
     }
 
     @Override

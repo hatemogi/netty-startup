@@ -6,12 +6,17 @@ public class ChatMessage {
     public String text;
 
     public ChatMessage(String command) {
-        this(command, null);
+        this(command, null, null);
     }
 
     public ChatMessage(String command, String nickname) {
+        this(command, nickname, null);
+    }
+
+    public ChatMessage(String command, String nickname, String text) {
         this.command = command.toUpperCase();
         this.nickname = nickname;
+        this.text = text;
     }
 
     public String toString() {
@@ -35,5 +40,23 @@ public class ChatMessage {
         }
         if (tokens.length > 1) m.text = tokens[1];
         return m;
+    }
+
+    private boolean bothNullOrEqual(String s1, String s2) {
+        return (s1 == null && s2 == null) || (s1 != null && s1.equals(s2));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof ChatMessage)) return false;
+        ChatMessage oc = (ChatMessage)o;
+        return this == o || command.equals(oc.command)
+                && bothNullOrEqual(nickname, oc.nickname)
+                && bothNullOrEqual(text, oc.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return (command + nickname + text).hashCode();
     }
 }

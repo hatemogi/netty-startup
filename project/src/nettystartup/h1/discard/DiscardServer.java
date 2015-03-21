@@ -1,5 +1,5 @@
 // modified from io.netty.example.discard
-package nettystartup.h1;
+package nettystartup.h1.discard;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

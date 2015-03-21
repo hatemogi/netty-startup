@@ -2,10 +2,19 @@ package nettystartup.h2.chat;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.*;
 
 public class ChatMessageTest {
+    @Test
+    public void equal() {
+        assertEquals(new ChatMessage("FROM", "me", "hello"), new ChatMessage("FROM", "me", "hello"));
+        assertNotEquals(new ChatMessage("FROM", "me", "hello"), new ChatMessage("FROM", "you", "hello"));
+        assertNotEquals(new ChatMessage("FROM", "me", "hello"), new ChatMessage("FROM", "me", null));
+        assertNotEquals(new ChatMessage("TEST", null, "hello"), new ChatMessage("TEST", "nick", "hello"));
+    }
+
     @Test
     public void parsePing() {
         ChatMessage m = ChatMessage.parse("PING");
@@ -24,18 +33,14 @@ public class ChatMessageTest {
 
     @Test
     public void parseFrom() {
-        ChatMessage m = ChatMessage.parse("FROM:you 메시지 왔어요");
-        assertThat(m.command, equalTo("FROM"));
-        assertThat(m.nickname, equalTo("you"));
-        assertThat(m.text, equalTo("메시지 왔어요"));
+        assertEquals(new ChatMessage("FROM", "you", "메시지 왔어요"),
+                ChatMessage.parse("FROM:you 메시지 왔어요"));
     }
 
     @Test
     public void parseNoNick() {
-        ChatMessage m = ChatMessage.parse("SEND 메시지:보내요");
-        assertThat(m.command, equalTo("SEND"));
-        assertThat(m.nickname, nullValue());
-        assertThat(m.text, equalTo("메시지:보내요"));
+        assertEquals(new ChatMessage("SEND", null, "메시지:보내요"),
+                ChatMessage.parse("SEND 메시지:보내요"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -49,4 +54,3 @@ public class ChatMessageTest {
         assertThat(m.toString(), equalTo("LEFT:netty"));
     }
 }
-

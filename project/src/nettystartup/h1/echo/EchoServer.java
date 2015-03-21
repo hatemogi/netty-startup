@@ -1,5 +1,5 @@
 // modified from io.netty.nettystartup.h1.discard
-package nettystartup.h2.echo;
+package nettystartup.h1.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -15,8 +15,7 @@ public final class EchoServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class);
-
-            // 여기를 채워 주세요
+            b.childHandler(new EchoServerHandler());
 
             ChannelFuture f = b.bind(8020).sync();
             f.channel().closeFuture().sync();

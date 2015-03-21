@@ -1,9 +1,9 @@
-package nettystartup.h2;
+package nettystartup.h1.echo;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
-import nettystartup.h2.echo.EchoServerHandler;
+import nettystartup.h1.echo.EchoServerHandler;
 import org.junit.Test;
 
 import static io.netty.util.ReferenceCountUtil.releaseLater;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
 public class EchoServerHandlerTest {
     @Test
     public void testEcho() {
-        String m = "echo test";
+        String m = "echo test\n";
         EmbeddedChannel ch = new EmbeddedChannel(new EchoServerHandler());
         ByteBuf in = Unpooled.wrappedBuffer(m.getBytes());
         ch.writeInbound(in);
