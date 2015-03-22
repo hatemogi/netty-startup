@@ -16,7 +16,6 @@ public final class EchoServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class);
             b.childHandler(new EchoServerHandler());
-
             ChannelFuture f = b.bind(8020).sync();
             f.channel().closeFuture().sync();
         } finally {

@@ -298,6 +298,8 @@ body {
     font-size: 0.9em; }
   .reveal section.code pre, .reveal section.code code {
     font-size: 0.8em; }
+  .reveal section.code h2 {
+    font-size: 1.2em; }
   .reveal :not(pre) > code {
     border: 1px solid #ddd;
     background-color: #eee;

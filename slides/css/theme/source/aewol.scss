@@ -108,6 +108,10 @@ $heading4Size: 1.00em;
     font-size: 0.8em;
   }
 
+  section.code h2 {
+    font-size: $heading2Size * 0.8;
+  }
+
   :not(pre) > code {
     border: 1px solid #ddd;
     background-color: #eee;
