@@ -300,6 +300,9 @@ body {
     font-size: 0.8em; }
   .reveal section.code h2 {
     font-size: 1.2em; }
+    .reveal section.code h2 small {
+      font-size: 0.5em;
+      vertical-align: baseline; }
   .reveal :not(pre) > code {
     border: 1px solid #ddd;
     background-color: #eee;

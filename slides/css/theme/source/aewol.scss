@@ -110,6 +110,10 @@ $heading4Size: 1.00em;
 
   section.code h2 {
     font-size: $heading2Size * 0.8;
+    small {
+      font-size: 0.5em;
+      vertical-align: baseline;
+    }
   }
 
   :not(pre) > code {

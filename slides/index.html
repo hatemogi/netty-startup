@@ -107,15 +107,22 @@
 						<script type="text/template">
 						## 4시간 진행순서
 
-						1. Netty 소개, 비동기 처리 기본, 첫 서버 개발
-						1. Netty의 주요 클래스 메모리모델, 채팅 서버 개발
-						1. Netty와 멀티쓰레드, HTTP 서버 개발
-						1. 각종 코덱과 WebSocket, 웹채팅 서비스 개발
+						1. 비동기 개념, 기본 인터페이스(```Channel```) 정리
+						1. [Netty의 주요 클래스 메모리모델](netty-02.html)
+						1. Netty와 멀티쓰레드
+						1. 각종 코덱과 WebSocket
+
+						#### 예제와 실습
+
+						1. Discard 서버, Echo 서버
+						1. 채팅 서버
+						1. HTTP 서버
+						1. 웹소켓 채팅 서버
 						</script>
 					</section>
 
 					<section>
-						<h2>각 시간 진행순서</h2>
+						<h2>매 시간 진행순서</h2>
 						<img src="img/pair.jpg" style="float: right; width: 60%;"/>
 						<p data-markdown>
 						1. 설명
@@ -289,15 +296,113 @@
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						## Netty의 주요 용어, 인터페이스
+						## Netty의 ```Channel```관련 주요 인터페이스
 
-						* Channel
-						* ChannelHandler
-						* ChannelHandlerContext
-						* ChannelPipeline
-						* ChannelFuture / ChannelPromise
-						* EventLoop / EventLoopGroup
+						* ```Channel```
+						* ```ChannelFuture```
+						* ```ChannelHandler```
+						* ```ChannelHandlerContext```
+						* ```ChannelPipeline```
+						* ```EventLoop```
 						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## Channel
+						* 읽기, 쓰기, 연결(connect), 바인드(bind)등의 I/O 작업을 할 수 있는 요소 또는 네트워크 연결
+						* 모든 I/O 작업은 비동기 -> ```ChannelFuture```
+
+						### 핵심 메소드
+						```java
+						ChannelFuture   write(Object obj)
+						ChannelFuture   flush(Object obj)
+						ChannelFuture   writeAndFlush(Object obj)
+						ChannelFuture   closeFuture()
+						ChannelPipeline pipeline()
+						SocketAddress   remoteAddress()
+						```
+
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelFuture
+						* ```Channel```의 I/O 작업의 결과
+						* ```ChannelFutureListener```를 등록해서 결과에 따른 작업 실행
+
+						### 핵심 메소드
+						```java
+						ChannelFuture addListener(GenericFutureListener<...> listener)
+						Channel       channel()
+						ChannelFuture await()
+						ChannelFuture sync()
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelHandler
+						* Netty의 핵심 요소!
+						* Netty의 I/O 이벤트를 처리하는 인터페이스
+						* ```ChannelInboundHandlerAdapter``` / ```ChannelOutboundHandlerAdapter```
+
+						### *전체* 메소드
+						```java
+						void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+						void handlerAdded(ChannelHandlerContext ctx)
+						void handlerRemoved(ChannelHandlerContext ctx)
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelHandlerContext
+						* ```ChannelHandler```는 ```ChannelHandlerContext```를 통해
+						 * 다음 ```ChannelHandler```에게 이벤트를 넘기거나,
+						 * 동적으로 ```ChannelPipeline```을 변경할 수 있음
+
+						### 핵심 메소드
+						```java
+						Channel               channel()
+						ChannelPipeline       pipeline()
+						ChannelFuture         write(Object msg)
+						ChannelHandlerContext fireChannelRead(Object msg)
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelPipeline
+						* ```Channel```에 드나드는 inbound / outbound 이벤트를 처리
+						* [Intercepting Filter 패턴](http://www.oracle.com/technetwork/java/interceptingfilter-142169.html) 처리, ```ChannelHandler``` 리스트
+						* 두번째 시간에 상세 설명
+
+						### 주요 메소드
+						```java
+						ChannelPipeline addLast(ChannelHandler... handlers)
+						ChannelPipeline addLast(String name, ChannelHandler handler)
+						ChannelHandler  remove(String name)
+						<T extends ChannelHandler> T remove(Class<T> handlerType)
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## EventLoop
+						* 등록된 ```Channel```들의 *모든 I/O 작업*을 처리
+						* 구현체 ```NioEventLoopGroup```를 주로 사용
+
+						### 주요 메소드
+						```java
+						boolean                inEventLoop()
+						<T> Future<T>          submit(Callable<T> task)
+						<V> Promise<V>         newPromise()
+						<V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)
+						```
+						</script>
+					</section>
+					<section>
+						<h2>Channel관련 인터페이스 전체 구조</h2>
 					</section>
 				</section>
 				<section data-markdown>
@@ -314,7 +419,7 @@
 					<section data-markdown>
 					## 첫 예제: DiscardServer
 
-					#### src/nettystartup/h1/discard
+					> src/nettystartup/h1/discard
 
 					* DiscardServer.java
 					* DiscardServerHandler.java
@@ -392,47 +497,6 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 					</section>
 				</section>
 
-					</section>
-				</section>
-
-				<section>
-					<section class="code">
-						<h3>
-							<small>src/nettystartup/h1/echo/</small>EchoServer.java
-						</h3>
-						<pre><code class="java" data-trim contenteditable>
-public final class EchoServer {
-    public static void main(String[] args) throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class);
-            b.childHandler(new EchoServerHandler());
-            ChannelFuture f = b.bind(8020).sync();
-            f.channel().closeFuture().sync();
-        } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        }
-    }
-}
-						</code></pre>
-					</section>
-				</section>
-				<section>
-					<section data-markdown>
-						<script type="text/template">
-						## ChannelHandler
-						```
-						public interface ChannelHandler
-						```
-						Handles or intercepts a ```ChannelInboundInvoker``` or ```ChannelOutboundInvoker``` operation, and forwards it to the next handler in a ```ChannelPipeline```.
-						</script>
-					</section>
-				</section>
-
 				<section>
 					<section data-markdown>
 					## Netty와 유닛테스팅
@@ -463,9 +527,9 @@ public final class EchoServer {
 						</script>
 					</section>
 					<section class="code">
-						<h3>
-							<small>test/nettystartup/h1/discard/</small>DiscardServerHandlerTest.java
-						</h3>
+						<h2>
+							<small>test/.../h1/discard/</small>DiscardServerHandlerTest.java
+						</h2>
 						<pre><code class="java" data-trim contenteditable>
 public class DiscardServerHandlerTest {
     @Test
@@ -484,6 +548,88 @@ public class DiscardServerHandlerTest {
 					<section data-background="img/discard_test2.png"></section>
 				</section>
 
+				<section>
+					<section>
+						<h2>첫번째 실습: EchoServer</h2>
+						<img src="img/pair.jpg" style="width: 40%; float: right;"/>
+						<p data-markdown>
+						* ```EchoServer```
+						* ```EchoServerHandler```
+						* ```EchoServerHandlerTest```
+						</p>
+					</section>
+					<section class="code">
+						<h2>
+							<small>src/nettystartup/h1/echo/</small>EchoServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public final class EchoServer {
+    public static void main(String[] args) throws Exception {
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class);
+            // TODO: 여기를 채워 주세요
+            ChannelFuture f = b.bind(8020).sync();
+            f.channel().closeFuture().sync();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
+    }
+}
+						</code></pre>
+					</section>
+
+					<section class="code">
+						<h2>
+							<small>src/nettystartup/h1/echo/</small>EchoServerHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+@Sharable
+class EchoServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ctx /* TODO: 여기를 채워주세요 */;
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+						</code></pre>
+					</section>
+
+				  <section class="code">
+						<h2>
+							<small>test/nettystartup/h1/echo/</small>EchoServerHandlerTest.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public class EchoServerHandlerTest {
+    @Test
+    public void echo() {
+        String m = "echo test\n";
+        EmbeddedChannel ch = new EmbeddedChannel(new EchoServerHandler());
+        ByteBuf in = Unpooled.copiedBuffer(m, CharsetUtil.UTF_8);
+        ch.writeInbound(in);
+        ByteBuf r = (ByteBuf)ch.readOutbound();
+        releaseLater(r);
+        assertThat(r.refCnt(), is(1));
+        assertThat(r.toString(CharsetUtil.UTF_8), equalTo(m));
+    }
+}
+						</code></pre>
+					</section>
+			  </section>
 				<section data-markdown>
 					<script type="text/template">
 					## 참고자료
