@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8">
+
+		<title>Netty 시작하기 (1)</title>
+
+		<meta name="description" content="자바 환경의 고성능 비동기 네트워크 프레임워크인 Netty를 이해하고, 간단한 예제를 만들어봅니다.">
+		<meta name="author" content="김대현">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/aewol.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section class="cover">
+					<h1>Netty 시작하기 (1)</h1>
+					<h3>고성능 네트워크 애플리케이션 프레임워크</h3>
+					<p class="name">
+						<a href="http://hatemogi.com">김대현</a><br/>
+						<a href="http://twitter.com/hatemagi">@hatemogi</a>
+					</p>
+				</section>
+
+				<section>
+					<h2>
+						김대현
+						<small style="vertical-align: bottom;">
+							<a href="https://twitter.com/hatemogi"><i class="fa fa-twitter"></i></a>
+							<a href="https://medium.com/@hatemogi"><i class="fa fa-medium"></i></a>
+							<a href="https://github.com/hatemogi"><i class="fa fa-github"></i></a>
+						</small>
+					</h2>
+					<p data-markdown>
+					* 2015, Netty 기반 서버 개발
+					* 2013, 사내 Redis SaaS, 160+ VM
+					* 2010, 클라우드, 네트워크 파일동기화 프로토콜 설계
+					* 2010, MyPeople, 네트워크 아키텍쳐 설계
+					* 2009, Cafe 채팅 부하분산 서버 개발
+					* 2004, Cafe 한줄메모장 개발, 일일 3억 PV
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>과정</h2>
+						<p>
+							<ol>
+								<li>Netty의 기본 설명</li>
+								<li>문제 풀이</li>
+								<li>예제 이해 / 실습 개발</li>
+							</ol>
+						</p>
+						<h2>목표</h2>
+						<p>
+							<ul>
+								<li>Event-Driven, 비동기 I/O 이해</li>
+								<li>Netty로 개발 경험</li>
+								<li>(조만간) 실무에 응용</li>
+							</ul>
+						</p>
+						<aside class="notes">
+							이 과정의 목표입니다. Netty의 기본을 설명하며, 중간중간 문제풀이로 이해를 돕고, 직접 예제를 개발해보는 과정을 통해,
+							오늘 4시간을 잘 보내고나면, "Event-Driven 서버 개발이 무엇인지, 비동기 I/O는 무엇인지 알겠다",
+							"나도 Netty로 개발해봤다", "어쩌면 실무에 응용해볼 수 있겠다"는 생각이 드셨으면 좋겠습니다.
+						</aside>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## 준비사항
+
+						* [IntelliJ 14 CE](https://www.jetbrains.com/idea/download/)
+						* [JDK8](https://jdk8.java.net/download.html)
+						* [Git 클라이언트](http://git-scm.com/downloads)
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## 4시간 진행순서
+
+						1. 비동기 개념, 기본 인터페이스(```Channel```) 정리
+						1. [메모리모델과 파이프라인](netty-02.html)
+						1. [쓰레드 모델, Future/Promise 활용](netty-03.html)
+						1. [각종 코덱과 WebSocket](netty-04.html)
+
+						#### 예제와 실습
+
+						1. Discard 서버, Echo 서버
+						1. 채팅 서버
+						1. HTTP 서버
+						1. 웹소켓 채팅 서버
+						</script>
+					</section>
+
+					<section>
+						<h2>매 시간 진행순서</h2>
+						<img src="img/pair.jpg" style="float: right; width: 60%;"/>
+						<p data-markdown>
+						1. 설명
+						1. 예제 설명 / 데모
+						1. 실습 (pair-)
+						</p>
+					</section>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+					## <i class="fa fa-question-circle"></i> 다음의 공통점
+
+					* [Nginx](http://nginx.org)
+					* [HAProxy](http://www.haproxy.org)
+					* [Memcached](http://memcached.org)
+					* [Redis](http://redis.io)
+					* [Node.js?](http://nodejs.org)
+					</script>
+				</section>
+				<section>
+					<section data-markdown>
+					## 왜 Netty를 쓸까?
+
+					* 고성능
+					* 쓰기 편하다 (유연하고 쉽다)
+					</section>
+					<section>
+						<h2>
+							얼마나 빠른가?
+							<small>
+								<a href="https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Java/netty/src/main/java/hello">netty</a>
+								<a href="https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Java/servlet/src/main/java/hello">servlet</a>
+							</small>
+						</h2>
+						<a href="http://www.techempower.com/benchmarks/#section=data-r9&amp;hw=i7&amp;test=plaintext">
+							<img src="img/webframeworkbenchmarks.png"/>
+						</a>
+
+					</section>
+					<section data-markdown>
+					## Netty가 고성능인 이유
+
+					* Non-blocking Asynchronous 처리가 기본
+					* 적은 쓰레드로 많은 요청을 처리
+					* GC부하를 최소화하는 Zero-copy ByteBuf 지원
+					</section>
+					<section data-markdown>
+					## Netty가 편한 이유
+
+					* 각종 네트워크 프로토콜 (코덱) 기본 지원
+					* 필요한 부분을 쉽게 조립해 쓸 수 있는 구조
+					* 멀티쓰레딩 처리 없이도...
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+					## 동기와 비동기
+					* Synchronous vs. Asynchronous
+					* Blocking vs. Non-blocking
+
+					## 우리말로 하자면...
+					* 요청하고 결과를 계속 기다리기
+					* 완료되면 알려달라고 요청하고 다른 일 하기
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## <i class="fa fa-mobile"></i> 고객센터에 전화를 했는데...
+
+						<i class="fa fa-comment"></i> 모든 상담원이 통화중입니다.
+
+						1. 연결될 때까지 기다리기
+						1. 전화해달라는 기록 남기고 끊기
+
+						## <i class="fa fa-question-circle"></i> 동기 or 비동기
+
+						* <i class="fa fa-coffee"></i> 커피 주문
+						* 지하철 이용, 자가 운전
+						* 업무요청 메일, 업무문의 전화
+						* 팀장의 업무지시
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## 동기 (Synchronous) 코드
+
+						<i class="fa fa-pause"></i> *Blocking* call
+
+						```java
+						// 동기 방식
+						void greeting(Context ctx) {
+							String req = ctx.readLine();
+							ctx.write("안녕, " + req);
+							System.out.println("완료");
+						}
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 비동기 (Asynchronous) 코드
+
+						<i class="fa fa-bolt"></i> *Non-blocking* call
+
+						```java
+						// 비동기 방식
+						void greeting(Context ctx) {
+							ctx.readLine().done(line -> {
+								ctx.write("안녕, " + req);
+							});
+							System.out.println("완료");
+						}
+						```
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Event-Driven Programming</h2>
+						<blockquote>
+							In computer programming, event-driven programming is a programming paradigm in which the flow of the program is determined by events such as user actions (mouse clicks, key presses), sensor outputs, or messages from other programs/threads. Event-driven programming is the dominant paradigm used in graphical user interfaces and other applications (e.g. JavaScript web applications) that are centered on performing certain actions in response to user input.
+							<cite><a href="http://en.wikipedia.org/wiki/Event-driven_programming">Wikipedia</a></cite>
+						</blockquote>
+					</section>
+
+					<section>
+						<h2>사건 기반 프로그래밍</h2>
+						<blockquote>
+							사건 기반 프로그래밍(영어: Event-driven programming; EDP)은 비주얼 베이직과 같이, 사용자의 명령·마우스 클릭·다른 프로그램의 메시지·키보드 글쇠 입력 등의 ‘사건’에 따라, 제어 흐름이 결정되어 일을 하도록 하게끔 만들어진 프로그래밍 언어 방식을 뜻한다.<cite><a href="http://ko.wikipedia.org/wiki/사건_기반_프로그래밍">위키백과</a></cite>
+						</blockquote>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## 등잔 밑의 Event-Driven 코드
+
+						```javascript
+						$("button").on("click", function(event) {
+							console.log(event);
+							alert("클릭");
+						});
+						```
+
+						* 자바스크립트
+						* iOS 앱
+						* Android 앱
+						* 데스크탑 애플리케이션
+						</script>
+					</section>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## True or False <i class="fa fa-question-circle"></i>
+
+					* 비동기와 Event-driven은 같은 뜻이다?
+					* Event-Driven은 클라이언트에 적합하다?
+					* 비동기식 싱글쓰레드에서는 Blocking Call을 할 수 없다?
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## Java의 NIO를 그냥 쓰면 안되나요 <i class="fa fa-question-circle"></i>
+					* 됩니다만...
+					</script>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						## Netty의 ```Channel```관련 주요 인터페이스
+
+						* ```Channel```
+						* ```ChannelFuture```
+						* ```ChannelHandler```
+						* ```ChannelHandlerContext```
+						* ```ChannelPipeline```
+						* ```EventLoop```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## Channel
+						* 읽기, 쓰기, 연결(connect), 바인드(bind)등의 I/O 작업을 할 수 있는 요소 또는 네트워크 연결
+						* 모든 I/O 작업은 비동기 -> ```ChannelFuture```
+
+						### 핵심 메소드
+						```java
+						ChannelFuture   write(Object obj)
+						ChannelFuture   flush(Object obj)
+						ChannelFuture   writeAndFlush(Object obj)
+						ChannelFuture   closeFuture()
+						ChannelPipeline pipeline()
+						SocketAddress   remoteAddress()
+						```
+
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelFuture
+						* ```Channel```의 I/O 작업의 결과
+						* ```ChannelFutureListener```를 등록해서 결과에 따른 작업 실행
+
+						### 핵심 메소드
+						```java
+						ChannelFuture addListener(GenericFutureListener<...> listener)
+						Channel       channel()
+						ChannelFuture await()
+						ChannelFuture sync()
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelHandler
+						* Netty의 핵심 요소!
+						* Netty의 I/O 이벤트를 처리하는 인터페이스
+						* ```ChannelInboundHandlerAdapter``` / ```ChannelOutboundHandlerAdapter```
+
+						### *전체* 메소드
+						```java
+						void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+						void handlerAdded(ChannelHandlerContext ctx)
+						void handlerRemoved(ChannelHandlerContext ctx)
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelHandlerContext
+						* ```ChannelHandler```는 ```ChannelHandlerContext```를 통해
+						 * 다음 ```ChannelHandler```에게 이벤트를 넘기거나,
+						 * 동적으로 ```ChannelPipeline```을 변경할 수 있음
+
+						### 핵심 메소드
+						```java
+						Channel               channel()
+						ChannelPipeline       pipeline()
+						ChannelFuture         write(Object msg)
+						ChannelHandlerContext fireChannelRead(Object msg)
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## ChannelPipeline
+						* ```Channel```에 드나드는 inbound / outbound 이벤트를 처리
+						* [Intercepting Filter 패턴](http://www.oracle.com/technetwork/java/interceptingfilter-142169.html) 처리, ```ChannelHandler``` 리스트
+						* 두번째 시간에 상세 설명
+
+						### 주요 메소드
+						```java
+						ChannelPipeline addLast(ChannelHandler... handlers)
+						ChannelPipeline addLast(String name, ChannelHandler handler)
+						ChannelHandler  remove(String name)
+						<T extends ChannelHandler> T remove(Class<T> handlerType)
+						```
+						</script>
+					</section>
+					<section data-markdown class="code">
+						<script type="text/template">
+						## EventLoop
+						* 등록된 ```Channel```들의 *모든 I/O 작업*을 처리
+						* 구현체 ```NioEventLoopGroup```를 주로 사용
+
+						### 주요 메소드
+						```java
+						boolean                inEventLoop()
+						<T> Future<T>          submit(Callable<T> task)
+						<V> Promise<V>         newPromise()
+						<V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)
+						```
+						</script>
+					</section>
+					<section>
+						<h2>Channel관련 인터페이스 전체 구조</h2>
+					</section>
+				</section>
+				<section data-markdown>
+					## 예제와 실습용 프로젝트
+
+					https://github.com/hatemogi/netty-startup
+
+					### Git clone
+					```bash
+					git clone https://github.com/hatemogi/netty-startup
+					```
+				</section>
+				<section>
+					<section data-markdown>
+					## 첫 예제: DiscardServer
+
+					> src/nettystartup/h1/discard
+
+					* DiscardServer.java
+					* DiscardServerHandler.java
+					</section>
+					<section class="code">
+						<h2>
+							<small>src/nettystartup/h1/discard/</small>DiscardServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public final class DiscardServer {
+    public static void main(String[] args) throws Exception {
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .handler(new LoggingHandler(LogLevel.INFO))
+                .childHandler(new DiscardServerHandler());
+            ChannelFuture f = b.bind(8010).sync();
+            System.err.println("Ready for 0.0.0.0:8010");
+            f.channel().closeFuture().sync();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
+    }
+}
+						</code></pre>
+					</section>
+
+					<section class="code">
+						<h2>
+							<small>src/nettystartup/h1/discard/</small>DiscardServerHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+@Shareable
+public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf buf = (ByteBuf) msg;
+        try {
+            // discard
+        } finally {
+            buf.release();
+        }
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+						</code></pre>
+					</section>
+					<section data-background="img/discard_run1.png"></section>
+					<section data-background="img/discard_run2.png"></section>
+					<section data-markdown>
+						<script type="text/template">
+						## DiscardServer 테스트
+						> telnet localhost 8010
+
+						```nohighlight
+						Trying ::1...
+						Connected to localhost.
+						Escape character is '^]'.
+						helo
+						test
+
+						^]
+						telnet> close
+						Connection closed.
+						```
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+					## Netty와 유닛테스팅
+
+					* EmbeddedChannel을 활용
+
+					```java
+					EmbeddedChannel ch =
+						new EmbeddedChannel(new HandlerToBeTested());
+					```
+
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## EmbeddedChannel
+						```java
+						public class EmbeddedChannel extends AbstractChannel {
+							public EmbeddedChannel(ChannelHandler... handlers) {}
+
+							public Object readInbound() { ... }
+							public Object readOutbound() { ... }
+							public boolean writeInbound(Object... msgs) { ... }
+							public boolean writeOutbound(Object... msgs) { ... }
+
+							public void checkException() { ... }
+						}
+						```
+						</script>
+					</section>
+					<section class="code">
+						<h2>
+							<small>test/.../h1/discard/</small>DiscardServerHandlerTest.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public class DiscardServerHandlerTest {
+    @Test
+    public void discard() {
+        String m = "discard test\n";
+        EmbeddedChannel ch = new EmbeddedChannel(new DiscardServerHandler());
+        ByteBuf in = Unpooled.wrappedBuffer(m.getBytes());
+        ch.writeInbound(in);
+        ByteBuf r = (ByteBuf) ch.readOutbound();
+        assertThat(r, nullValue());
+    }
+}
+						</code></pre>
+					</section>
+					<section data-background="img/discard_test1.png"></section>
+					<section data-background="img/discard_test2.png"></section>
+				</section>
+
+				<section>
+					<section>
+						<h2>첫번째 실습: EchoServer</h2>
+						<img src="img/pair.jpg" style="width: 40%; float: right;"/>
+						<p data-markdown>
+						* ```EchoServer```
+						* ```EchoServerHandler```
+						* ```EchoServerHandlerTest```
+						</p>
+					</section>
+					<section class="code">
+						<h2>
+							<small>src/nettystartup/h1/echo/</small>EchoServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public final class EchoServer {
+    public static void main(String[] args) throws Exception {
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class);
+            // TODO: 여기를 채워 주세요
+            ChannelFuture f = b.bind(8020).sync();
+            f.channel().closeFuture().sync();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
+    }
+}
+						</code></pre>
+					</section>
+
+					<section class="code">
+						<h2>
+							<small>src/nettystartup/h1/echo/</small>EchoServerHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+@Sharable
+class EchoServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ctx /* TODO: 여기를 채워주세요 */;
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+						</code></pre>
+					</section>
+
+				  <section class="code">
+						<h2>
+							<small>test/nettystartup/h1/echo/</small>EchoServerHandlerTest.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public class EchoServerHandlerTest {
+    @Test
+    public void echo() {
+        String m = "echo test\n";
+        EmbeddedChannel ch = new EmbeddedChannel(new EchoServerHandler());
+        ByteBuf in = Unpooled.copiedBuffer(m, CharsetUtil.UTF_8);
+        ch.writeInbound(in);
+        ByteBuf r = (ByteBuf)ch.readOutbound();
+        releaseLater(r);
+        assertThat(r.refCnt(), is(1));
+        assertThat(r.toString(CharsetUtil.UTF_8), equalTo(m));
+    }
+}
+						</code></pre>
+					</section>
+			  </section>
+				<section data-markdown>
+					<script type="text/template">
+					## 참고자료
+					* [User guide for Netty 4.x](http://netty.io/wiki/user-guide-for-4.x.html)
+					* [Netty4 Intro](http://normanmaurer.me/presentations/2014-http-netty/slides.html)
+					* [Why Netty?](http://normanmaurer.me/presentations/2014-netflix-netty/slides.html)
+					* [The C10K problem](http://www.kegel.com/c10k.html)
+					* [Web Framework Benchmarks](http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext)
+					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html기)
+					</script>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: false,
+				slideNumber: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

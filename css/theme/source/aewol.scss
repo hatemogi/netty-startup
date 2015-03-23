@@ -1,0 +1,152 @@
+/**
+ * Aewol theme for reveal.js.
+ *
+ * Copyright (C) 2015 Daehyun Kim
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+@import url(https://fonts.googleapis.com/css?family=Montserrat:700);
+@import url(https://fonts.googleapis.com/css?family=Neuton);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: invert(#000);
+$mainColor: invert(rgb(219, 219, 219));
+$headingColor: invert(rgb(117, 188, 185));
+$selectionBackgroundColor: invert(rgb(158, 193, 193));
+$linkColor: invert(rgb(115, 171, 210));
+$linkColorHover: invert(lighten( $linkColor, 20% ));
+
+$mainFont: 'Neuton', 'Open Sans', 'NanumMyeongjo', sans-serif;
+$headingFont: 'Montserrat', 'Noto Sans Korean', Impact, sans-serif;
+$mainFontWeight: bold;
+$headingFontWeight: bold;
+$headingTextShadow: none;
+$headingLetterSpacing: -0.03em;
+$headingTextTransform: none;
+$mainFontSize: 38px;
+$heading1Size: 2.4em;
+$heading2Size: 1.5em;
+$heading3Size: 1.2em;
+$heading4Size: 1.00em;
+
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+.reveal {
+  font-weight: $mainFontWeight;
+
+  h2 {
+    border-bottom: 3px solid $headingColor;
+  }
+
+  section {
+    text-align: left;
+  }
+
+  strong, b {
+    font-weight: bolder;
+  }
+
+  blockquote {
+    background-color: #444;
+    border-radius: 5px;
+    font-style: normal;
+    margin: 10px auto;
+    width: 80%;
+    padding: 10px 5px;
+  }
+
+  section.cover {
+    border-top: 5px dotted $headingColor;
+  }
+
+  ul, ol {
+    margin-bottom: 1em;
+  }
+
+  li {
+    line-height: 1.5;
+  }
+
+  .cover h2, .cover h3 {
+    color: $mainColor;
+  }
+
+  .cover .name {
+    float: right;
+    text-align: right;
+    margin-top: 30%;
+  }
+
+  .fa {
+    font-family: 'FontAwesome';
+    font-style: normal;
+  }
+
+  pre {
+    width: 100%;
+  }
+
+  pre, code {
+    font-family: 'Inconsolata', 'Inconsolata-g', Menlo, monospace;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+
+  section.code pre, section.code code {
+    font-size: 0.8em;
+  }
+
+  section.code h2 {
+    font-size: $heading2Size * 0.8;
+    small {
+      font-size: 0.5em;
+      vertical-align: baseline;
+    }
+  }
+
+  :not(pre) > code {
+    border: 1px solid #ddd;
+    background-color: #eee;
+    padding: 3px 5px;
+    border-radius: 3px;
+  }
+
+  pre code {
+    max-height: 580px;
+    border-radius: 5px;
+  }
+
+  pre ::selection {
+    color: #000;
+    background-color: #ffffff;
+    text-shadow: none;
+  }
+
+  blockquote {
+    width: 95%;
+    font-size: 80%;
+    margin: $blockMargin auto;
+    padding: 10px;
+    border-radius: 0;
+    background: darken($backgroundColor, 2%);
+    border-left: 3px solid $headingColor;
+    box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
+  }
+
+  blockquote cite {
+    float: right;
+    font-style: italic;
+  }
+}
