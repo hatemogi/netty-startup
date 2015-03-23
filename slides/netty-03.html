@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8">
+
+		<title>Netty 시작하기 (2)</title>
+
+		<meta name="description" content="자바 환경의 고성능 비동기 네트워크 프레임워크인 Netty를 이해하고, 간단한 예제를 만들어봅니다.">
+		<meta name="author" content="김대현">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/aewol.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section class="cover">
+					<h1>Netty 시작하기 (2)</h1>
+					<h3>메모리 모델과 파이프라인</h3>
+					<p class="name">
+						<a href="http://hatemogi.com">김대현</a><br/>
+						<a href="http://twitter.com/hatemagi">@hatemogi</a>
+					</p>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## Netty 시작하기 두번째 시간
+					* 메모리 모델과 Reference-Counted Object
+					* 파이프라인(```ChannelPipeline```)의 기초와 활용
+
+					### 실습과 예제
+					* 텍스트 기반 채팅 서버 개발
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## 메모리 모델과 ByteBuf
+					* Netty에서 사용하는 ByteBuf는 별도로 관리
+					* 성능 측면에서 GC부담을 최소화
+					* NIO의 ```ByteBuffer```와 같은 역할이지만 성능 튜닝
+					</script>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: false,
+				slideNumber: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return true || !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

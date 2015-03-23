@@ -456,7 +456,6 @@ public final class DiscardServer {
 							<small>src/nettystartup/h1/discard/</small>DiscardServerHandler.java
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
-@Shareable
 public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -588,18 +587,15 @@ public final class EchoServer {
 							<small>src/nettystartup/h1/echo/</small>EchoServerHandler.java
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
-@Sharable
 class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ctx /* TODO: 여기를 채워주세요 */;
     }
-
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
-
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
@@ -638,7 +634,7 @@ public class EchoServerHandlerTest {
 					* [Why Netty?](http://normanmaurer.me/presentations/2014-netflix-netty/slides.html)
 					* [The C10K problem](http://www.kegel.com/c10k.html)
 					* [Web Framework Benchmarks](http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext)
-					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html기)
+					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
 					</script>
 				</section>
 			</div>

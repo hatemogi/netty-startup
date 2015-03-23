@@ -49,6 +49,7 @@ module.exports = function(grunt) {
 					'css/theme/solarized.css': 'css/theme/source/solarized.scss',
 					'css/theme/blood.css': 'css/theme/source/blood.scss',
 					'css/theme/aewol.css': 'css/theme/source/aewol.scss'
+					'css/theme/aewol2.css': 'css/theme/source/aewol2.scss'
 				}
 			}
 		},
@@ -110,7 +111,8 @@ module.exports = function(grunt) {
 				'js/**',
 				'lib/**',
 				'images/**',
-				'plugin/**'
+				'plugin/**',
+				'img/**'
 			]
 		},
 
