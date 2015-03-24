@@ -139,6 +139,7 @@
 						1. 실습 (pair-)
 						</p>
 					</section>
+					<section data-background="img/excercise.png"></section>
 				</section>
 				<section data-markdown>
 					<script type="text/template">
@@ -592,7 +593,7 @@ public final class EchoServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class);
-            // TODO: 여기를 채워 주세요
+            // TODO: [실습 1-1] 이 부분을 채워서 EchoServerHandler를 등록합니다
             ChannelFuture f = b.bind(8020).sync();
             f.channel().closeFuture().sync();
         } finally {
@@ -612,7 +613,7 @@ public final class EchoServer {
 class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ctx /* TODO: 여기를 채워주세요 */;
+        // TODO: [실습1-2] 받은대로 응답하는 코드를 작성합니다
     }
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {

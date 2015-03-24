@@ -59,6 +59,97 @@
 					* 웹기반 채팅 서버 개발
 					</script>
 				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# Netty의 풍부한 코덱
+						</script>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>지난 시간의</small> ChatServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public final class ChatServer {
+  public static void main(String[] args) throws Exception {
+    NettyStartupUtil.runServer(8030, new ChannelInitializer&lt;SocketChannel&gt;() {
+      @Override
+      protected void initChannel(SocketChannel ch) throws Exception {
+        ch.pipeline()
+          .addLast(new LineBasedFrameDecoder(1024, true, true))
+          .addLast(new StringDecoder(CharsetUtil.UTF_8),
+                   new StringEncoder(CharsetUtil.UTF_8))
+          .addLast(new ChatMessageCodec(),
+                   new LoggingHandler(LogLevel.INFO))
+          .addLast(new ChatServerHandler());
+      }
+    });
+  }
+}
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# 실습: 웹소켓 기반 채팅 서버
+
+						</script>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h4/</small>WebChatServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public class WebChatServer {
+    static String index = System.getProperty("user.dir") + "/res/h4/index.html";
+
+    public static void main(String[] args) throws Exception {
+        NettyStartupUtil.runServer(8040, new ChannelInitializer&lt;SocketChannel&gt;() {
+            @Override
+            public void initChannel(SocketChannel ch) {
+                ChannelPipeline p = ch.pipeline();
+                p.addLast(new HttpServerCodec());
+                p.addLast(new HttpObjectAggregator(65536));
+                p.addLast(new WebSocketHandshakeHandler("/chat", new WebChatHandler()));
+                p.addLast(new HttpStaticFileHandler("/", index));
+                // TODO: [실습4-1] 실습3-2와 마찬가지로 404 응답을 처리하게 합니다.
+            }
+        });
+    }
+}
+						</code></pre>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h4/</small>WebChatServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+class WebChatHandler extends SimpleChannelInboundHandler&lt;WebSocketFrame&gt; {
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        ChatServerHandler chatHandler = new ChatServerHandler();
+        // TODO: [실습4-2] 파이프라인에 코덱과 핸들러를 추가해서 WebSocket과 ChatServerHandler를 연결합니다.
+        chatHandler.helo(ctx.channel());
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+        ... TextWebSocketFrame만 걸러서 다음 핸들러에 넘기는 코드 ...
+        ctx.fireChannelRead(frame.retain());
+    }
+}
+						</code></pre>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h4/</small>WebChatServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+						</code></pre>
+					</section>
+
+				</section>
 				<section data-markdown>
 					<script type="text/template">
 					## 참고자료

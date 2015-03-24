@@ -268,35 +268,62 @@ public class ChatMessage {
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
 public class ChatServerHandler extends SimpleChannelInboundHandler&lt;ChatMessage&gt; {
-  @Override
-  public void channelActive(ChannelHandlerContext ctx) {
-    helo(ctx.channel());
-  }
-  @Override
-  public void channelInactive(final ChannelHandlerContext ctx) {
-    channels.remove(ctx.channel());
-    channels.writeAndFlush(M("LEFT", nickname(ctx)));
-    nicknameProvider.release(nickname(ctx));
-  }
-  ... 다음 슬라이드에 계속 ...
+    private static final ChannelGroup channels =
+        new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+
+    public void channelActive(ChannelHandlerContext ctx) {
+        helo(ctx.channel());
+    }
+
+    public void channelInactive(final ChannelHandlerContext ctx) {
+        channels.remove(ctx.channel());
+        channels.writeAndFlush(M("LEFT", nickname(ctx)));
+        nicknameProvider.release(nickname(ctx));
+    }
+    ... 다음 슬라이드에 계속 ...
 }
 						</code></pre>
 					</section>
+
 					<section class="small-code">
 						<h2>
 							<small>src/nettystartup/h3/</small>ChatServerHandler.java (2)
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
+public class ChatServerHandler extends ... {
+    ...
+    public void helo(Channel ch) {
+        if (nickname(ch) != null) return; // already done;
+        String nick = nicknameProvider.reserve();
+        if (nick == null) {
+            ch.writeAndFlush(M("ERR", "sorry, no more names for you"))
+              .addListener(ChannelFutureListener.CLOSE);
+        } else {
+            bindNickname(ch, nick);
+            channels.forEach(c -> ch.write(M("HAVE", nickname(c))));
+            channels.writeAndFlush(M("JOIN", nick));
+            channels.add(ch);
+            ch.writeAndFlush(M("HELO", nick));
+        }
+    }
+    ...
+}
+						</code></pre>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h3/</small>ChatServerHandler.java (3)
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
 public class ChatServerHandler extends SimpleChannelInboundHandler&lt;ChatMessage&gt; {
   ... 이전 슬라이드에서 이어짐 ...
-  @Override
   protected void channelRead0(ChannelHandlerContext ctx, ChatMessage msg) throws Exception {
     if ("PING".equals(msg.command)) {
-      ctx.write(M("PONG"));
+      // TODO: [실습3-1] PING 명령어에 대한 응답을 내보냅니다
     } else if ("QUIT".equals(msg.command)) {
-      ctx; /* TODO: 실습구현 (1)*/
+      // TODO: [실습3-2] QUIT 명령어를 처리하고 BYE를 응답합니다. 연결도 끊습니다.
     } else if ("SEND".equals(msg.command)) {
-      channels; /* TODO: 실습구현 (2) */
+      // TODO: [실습3-3] 클라이언트로부터 대화 텍스트가 왔습니다. 모든 채널에 방송합니다.
     } else if ("NICK".equals(msg.command)) {
       changeNickname(ctx, msg);
     } else {
