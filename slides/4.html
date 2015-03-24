@@ -63,6 +63,13 @@
 					<section data-markdown>
 						<script type="text/template">
 						# Netty의 풍부한 코덱
+
+						> io.netty.handler.codec.*
+
+						* 텍스트 처리
+						* 압축 처리
+						* 다양한 프로토콜 지원
+						* 코덱 개발시 이용하는 클래스들
 						</script>
 					</section>
 					<section class="small-code">
@@ -88,6 +95,43 @@ public final class ChatServer {
 }
 						</code></pre>
 					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 텍스트 처리
+
+						* StringEncoder, StringDecoder
+						* Base64Encoder, Base64Decoder
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 압축 처리
+
+						* Zlib
+						* Snappy
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 다양한 프로토콜 지원
+
+						* ProtoBuf
+						* HTTP, SPDY, WebSocket
+						* Socks
+						* HTTP/2 (개발버전)
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 코덱 개발용
+
+						* LineBasedFrameDecoder
+						* ByteToMessageCodec
+						* MessageToMessageCodec
+						* FixedLengthFrameDecoder
+						</script>
+					</section>
+
 				</section>
 				<section>
 					<section data-markdown>
@@ -95,6 +139,20 @@ public final class ChatServer {
 						# 실습: 웹소켓 기반 채팅 서버
 
 						> ```ChannelPipeline```을 잘 조립해서 세번째 시간에 개발한 ```ChatServerHandler```를 그대로 다시 사용해서 웹소켓 기반 채팅 서버를 만들어봅시다. 웹브라우저용 클라이언트는 잘 준비돼 있습니다.
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 웹소켓 (WebSocket)
+
+						* 모던 웹브라우저 대부분이 지원하는 양방향 프로토콜
+						* HTTP를 연결된 다음 WebSocket통신으로 업그레이드
+						* 얼핏 HTTP인 것 같지만 사실상 다른 프로토콜
+
+						### 참고
+
+						* SPDY
+						* HTTP/2
 						</script>
 					</section>
 					<section data-background="img/ex4-2.png" data-background-size="800px">
@@ -173,13 +231,16 @@ class WebSocketChatCodec extends
 						# 도전과제
 
 						> 시간이 더 있다면, 세번째 시간에 개발한 채팅 서버에 TCP 연결로 프록시 처리를 하는 웹소켓 채팅서비스를 만들어봅시다.
+
+						브라우저 <-> 웹소켓 서버 프로세스 <-> 채팅 서버 프로세스
 						</script>
 					</section>
 				</section>
 				<section data-markdown>
 					<script type="text/template">
 					## 참고자료
-					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
+					* [SPDY](http://en.wikipedia.org/wiki/SPDY)
+					* [Hello HTTP/2, Goodbye SPDY](http://blog.chromium.org/2015/02/hello-http2-goodbye-spdy-http-is_9.html)
 					</script>
 				</section>
 

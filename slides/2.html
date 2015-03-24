@@ -473,6 +473,23 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler&lt;HttpRe
 							<small>test/nettystartup/h2/http/</small>HttpNotFoundHandler.java
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
+public class HttpNotFoundHandler extends SimpleChannelInboundHandler&lt;HttpRequest&gt; {
+    @Override
+    protected void channelRead0(C..H..Context ctx, HttpRequest req) throws E.. {
+        ByteBuf buf = Unpooled.copiedBuffer("Not Found", CharsetUtil.UTF_8);
+        FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND, buf);
+        res.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+        if (HttpHeaders.isKeepAlive(req)) {
+            res.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        }
+        res.headers().set(CONTENT_LENGTH, buf.readableBytes());
+        ctx.writeAndFlush(res).addListener((ChannelFuture f) -&gt; {
+            if (!HttpHeaders.isKeepAlive(req)) {
+                f.channel().close();
+            }
+        });
+    }
+}
 
 						</code></pre>
 					</section>
@@ -480,17 +497,11 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler&lt;HttpRe
 						<script type="text/template">
 						## 실습 정리
 
-						* Netty 기본 ```HttpServerCodec```을 써서 간단히 HTTP 서버 구현
+						* 기본 ```HttpServerCodec```을 써서 간단히 HTTP 서버 구현
 						* ```GET /``` 처리와 ```404``` 위임 처리를 통해 ChannelPipeline 이해
 						</script>
 					</section>
 
-				</section>
-				<section data-markdown>
-					<script type="text/template">
-					## 참고자료
-					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
-					</script>
 				</section>
 
 				<section data-markdown>
