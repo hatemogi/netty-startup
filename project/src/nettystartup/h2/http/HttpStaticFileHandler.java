@@ -22,7 +22,12 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpR
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
-        // TODO: [실습2-1] sendStaticFile메소드를 써서 구현합니다. "/" 요청이 아닌 경우에는 어떻게 할까요?
+        // DONE: [실습2-1] sendStaticFile메소드를 써서 구현합니다. "/" 요청이 아닌 경우에는 어떻게 할까요?
+        if (req.getUri().equals(path)) {
+            sendStaticFile(ctx, req);
+        } else {
+            ctx.fireChannelRead(req.retain());
+        }
     }
 
     private void sendStaticFile(ChannelHandlerContext ctx, FullHttpRequest req) throws IOException {
