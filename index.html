@@ -17,7 +17,7 @@
 		<link rel="stylesheet" href="css/theme/aewol.css" id="theme">
 
 		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="lib/css/railscasts.css">
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 		<!-- Printing and PDF exports -->
@@ -51,9 +51,9 @@
 
 				<section data-markdown>
 					<script type="text/template">
-					# 발표 자료
+					## 지금 보시는 발표 자료는...
 
-					> ### https://hatemogi.github.io/netty-startup
+					> ### http://hatemogi.github.io/netty-startup
 
 					</script>
 				</section>
@@ -117,9 +117,9 @@
 						## 4시간 진행 주제
 
 						1. 비동기 개념, 기본 인터페이스(```Channel```) 정리
-						1. [메모리 모델과 파이프라인](2.html)
-						1. [쓰레드 모델, Future/Promise 활용](3.html)
-						1. [각종 코덱과 WebSocket](4.html)
+						1. [고성능 메모리 모델과 유연한 파이프라인](2.html)
+						1. [깔끔한 쓰레드 모델, Future/Promise 활용](3.html)
+						1. [풍부한 코덱과 WebSocket](4.html)
 
 						#### 예제와 실습
 
@@ -151,6 +151,7 @@
 					* [Node.js?](http://nodejs.org)
 					</script>
 				</section>
+
 				<section>
 					<section data-markdown>
 					# 왜 Netty를 쓸까?
@@ -184,6 +185,18 @@
 					* 각종 네트워크 프로토콜 (코덱) 기본 지원
 					* 필요한 부분을 쉽게 조립해 쓸 수 있는 구조
 					* 멀티쓰레딩 처리 없이도...
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## Netty 버전
+
+						> 이 자료와 실습은 4.0.26.Final을 기준으로 합니다.
+
+						* 5.0.0.Alpha2 ‐ 04-Mar-2015 (Development)
+						* 4.1.0.Beta4 ‐ 04-Mar-2015 (Development)
+						* 4.0.26.Final ‐ 04-Mar-2015 (Stable, Recommended)
+						* 3.10.1.Final ‐ 23-Mar-2015 (Stable)
+						</script>
 					</section>
 				</section>
 
@@ -650,7 +663,7 @@ public class EchoServerHandlerTest {
 					<script type="text/template">
 					## 다음 시간에는...
 
-					> https://hatemogi.github.io/netty-startup/2.html
+					> http://hatemogi.github.io/netty-startup/2.html
 					</script>
 				</section>
 			</div>
