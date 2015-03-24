@@ -18,7 +18,8 @@ public class HttpStaticServer {
                 p.addLast(new HttpServerCodec());
                 p.addLast(new HttpObjectAggregator(65536));
                 p.addLast(new HttpStaticFileHandler("/", index));
-                // TODO: [실습2-2] HttpNotFoundHandler를 써서 404응답을 처리합니다.
+                // DONE: [실습2-2] HttpNotFoundHandler를 써서 404응답을 처리합니다.
+                p.addLast(new HttpNotFoundHandler());
             }
         });
     }
