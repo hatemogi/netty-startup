@@ -106,7 +106,7 @@ module.exports = function(grunt) {
 
 		zip: {
 			'reveal-js-presentation.zip': [
-				'index.html',
+				'index.html', '2.html', '3.html', '4.html',
 				'css/**',
 				'js/**',
 				'lib/**',
