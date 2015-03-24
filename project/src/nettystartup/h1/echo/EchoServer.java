@@ -15,7 +15,7 @@ public final class EchoServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class);
-            b.childHandler(new EchoServerHandler());
+            // TODO: 실습 1-1
             ChannelFuture f = b.bind(8011).sync();
             f.channel().closeFuture().sync();
         } finally {

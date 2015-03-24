@@ -9,7 +9,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ctx.write(msg);
+        // TODO: 실습1-2
     }
 
     @Override

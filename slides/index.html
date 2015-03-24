@@ -592,7 +592,7 @@ public final class EchoServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class);
-            // TODO: 여기를 채워 주세요
+    		    // TODO: 실습1-1
             ChannelFuture f = b.bind(8020).sync();
             f.channel().closeFuture().sync();
         } finally {
@@ -612,7 +612,7 @@ public final class EchoServer {
 class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ctx /* TODO: 여기를 채워주세요 */;
+        // TODO: 실습1-2
     }
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {

@@ -20,7 +20,8 @@ public class EchoServerHandlerTest {
         ch.writeInbound(in);
         ByteBuf r = (ByteBuf)ch.readOutbound();
         releaseLater(r);
-        assertThat(r.refCnt(), is(1));
-        assertThat(r.toString(CharsetUtil.UTF_8), equalTo(m));
+        assertThat("응답이 없습니다", r, notNullValue());
+        assertThat("참조수는 1이어야 합니다",r.refCnt(), is(1));
+        assertThat("수신한 텍스트가 결과로 와야합니다", r.toString(CharsetUtil.UTF_8), equalTo(m));
     }
 }
