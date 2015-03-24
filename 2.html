@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8">
+
+		<title>Netty 시작하기 (2)</title>
+
+		<meta name="description" content="자바 환경의 고성능 비동기 네트워크 프레임워크인 Netty를 이해하고, 간단한 예제를 만들어봅니다.">
+		<meta name="author" content="김대현">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/aewol2.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section class="cover">
+					<h1>Netty 시작하기 (2)</h1>
+					<h3>메모리 모델과 채널 파이프라인</h3>
+					<p class="name">
+						<a href="http://hatemogi.com">김대현</a><br/>
+						<a href="http://twitter.com/hatemagi">@hatemogi</a>
+					</p>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## Netty 시작하기: 두번째 시간
+					* 메모리 모델과 바이트 버퍼
+					* 파이프라인(```ChannelPipeline```) 활용
+					* ```ChannelInboundHandler```와 아이들
+
+					### 실습과 예제
+					* 텍스트 기반 채팅 서버 개발
+					</script>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# 메모리 모델과 바이트 버퍼
+						* Netty에서 사용하는 ```ByteBuf```는 별도로 관리
+						* 성능 측면에서 GC부담을 최소화
+						* NIO의 ```ByteBuffer```와 같은 역할, 성능 최적화
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## io.netty.buffer.*
+						* 커스텀 타입 개발가능
+						* 복합(composite) 버퍼 도입으로 버퍼 복사를 최소화
+						* 필요에 따라 버퍼 용량 **"자동"** 증가
+						* ```flip()```호출 필요없음
+						</script>
+					</section>
+
+<!-- 					<section data-markdown>
+						<script type="text/template">
+						## wrappedBuffer
+						* 다른 바이트 배열이나 ```ByteBuf```를 감싼 버퍼
+						* 원래 값이 바뀌면 함께 바뀌는 결과
+						* 잘 활용하면 메모리 복사를 최소화
+
+						## copiedBuffer
+						* 원래 값을 복사해서 새로 ```ByteBuf```를 만듦
+						* 이미 복사했으므로 원래값 변경과 무관
+						</script>
+					</section>
+ -->
+					<section data-markdown>
+						<script type="text/template">
+						## ReferenceCounted
+						* 별도 메모리 풀에서 할당 / 해제
+						* 최초의 ```참조수(refCnt)```는 "1"
+						* 더 참조하는 객체가 생기면 ```retain()``` 호출 -> 1증가
+						* 객체를 다 썼으면 ```release()``` 호출 -> 1감소
+						* ```참조수```가 0이되면 메모리 해제
+
+						```java
+						public interface ReferenceCounted {
+						    int refCnt();
+						    ReferenceCounted retain();
+						    boolean release();
+						}
+						```
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## retain() / release() 정책
+
+						> 마지막에 사용하는 메소드가 ```release()```한다
+
+						#### 즉, 어떤 메소드 ```void A(ReferenceCounted obj)```가
+
+						1. 다른 메소드 ```B(obj)```를 호출하는 경우
+						  * 메소드 ```A(obj)```에서는 ```release()```할 필요 없다
+						  * 메소드 ```B```의 책임 (or 그 다음 어딘가)
+						1. ```obj```를 잘 쓰고, 별다른 메소드 호출이 없이 끝난다
+						  * ```obj.release()```를 호출 해야함!
+						</script>
+					</section>
+
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						<h2>연습문제: 누가 release()하나요 <i class="fa fa-question-circle"></i></h2>
+						```java
+public ByteBuf a(ByteBuf input) { ... return input; }
+public ByteBuf b(ByteBuf input) {
+  try {
+    output = input.alloc().directBuffer(input.readableBytes() + 1);
+    ... return output;
+  } finally { input.release(); }
+}
+public void c(ByteBuf input) { ... input.release(); }
+
+public void main() {
+  ByteBuf buf = ...;
+  c(b(a(buf)));
+  System.out.println(buf.refCnt();
+}
+```
+						</script>
+					</section>
+
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h1/discard/</small>DiscardServerHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+class DiscardServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf buf = (ByteBuf) msg;
+        try {
+            // discard
+        } finally {
+            buf.release();
+        }
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+						</code></pre>
+					</section>
+
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h1/echo/</small>EchoServerHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+class EchoServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ctx.write(msg);
+    }
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+						</code></pre>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## 파생 버퍼 <small>Derived Buffer</small>
+						아래 메소드로 파생된 ```ByteBuf```는 원래 버퍼의 참조수를 공유
+						```java
+						public abstract class ByteBuf implements ReferenceCounted, ... {
+						  public abstract ByteBuf duplicate();
+						  public abstract ByteBuf slice();
+						  public abstract ByteBuf slice(int index, int length);
+						  public abstract ByteBuf order(ByteOrder endianness);
+						}
+						```
+						* 파생될 때 참조수가 증가하지 **않음**
+						* 그러므로, 다른 메소드에 넘길 때는 ```retain()``` 필요
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## ByteBufHolder
+						> DatagramPacket, HttpContent, WebSocketframe
+
+						* 파생 버퍼와 마찬가지로 원래 버퍼와 참조수를 공유
+						</script>
+					</section>
+
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# 채널 파이프라인의 활용
+						* 각각의 채널에는 ```ChannelPipeline```이 있고
+						* 한 ```ChannelPipeline```에는 ```ChannelHandler``` 여러개
+						* ```ChannelPipeline``` 조립에 따라 ```ChannelHandler```를 다양하게 활용 가능
+						</script>
+					</section>
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## Channel
+						* 읽기, 쓰기, 연결(connect), 바인드(bind)등의 I/O 작업을 할 수 있는 요소 또는 네트워크 연결
+						* 모든 I/O 작업은 비동기 -> ```ChannelFuture```
+
+						### 핵심 메소드
+						```java
+						ChannelFuture   write(Object obj)
+						ChannelFuture   flush(Object obj)
+						ChannelFuture   writeAndFlush(Object obj)
+						ChannelFuture   closeFuture()
+						ChannelPipeline pipeline()
+						SocketAddress   remoteAddress()
+						```
+
+						</script>
+					</section>
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## ChannelHandler
+						* Netty의 핵심 요소!
+						* Netty의 I/O 이벤트를 처리하는 인터페이스
+						* ```ChannelInboundHandlerAdapter``` / ```ChannelOutboundHandlerAdapter```
+
+						### *전체* 메소드
+						```java
+						void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+						void handlerAdded(ChannelHandlerContext ctx)
+						void handlerRemoved(ChannelHandlerContext ctx)
+						```
+						</script>
+					</section>
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## ChannelPipeline
+						* ```Channel```에 드나드는 inbound / outbound 이벤트를 처리
+						* [Intercepting Filter 패턴](http://www.oracle.com/technetwork/java/interceptingfilter-142169.html) 처리, ```ChannelHandler``` 리스트
+
+						### 주요 메소드
+						```java
+						ChannelPipeline addLast(ChannelHandler... handlers)
+						ChannelPipeline addLast(String name, ChannelHandler handler)
+						ChannelHandler  remove(String name)
+						<T extends ChannelHandler> T remove(Class<T> handlerType)
+						```
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						# ChannelInboundHandler
+
+						> (채널로 들어오는) 인바운드(inbound) 이벤트를 담당하는 인터페이스
+
+						* ```ChannelInboundHandler```
+						* ```ChannelInboundHandlerAdapter```
+						* ```SimpleInboundHandler<I>```
+						* ```ChannelInitializer<C extends Channel>```
+						</script>
+					</section>
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## ChannelInboundHandler
+						```java
+						public interface ChannelInboundHandler extends ChannelHandler {
+							void channelRegistered(ChannelHandlerContext ctx) throws Exception;
+							void channelActive(... ctx) throws Exception;
+							void channelRead(... ctx, Object msg) throws Exception;
+							void channelReadComplete(... ctx) throws Exception;
+							void userEventTriggered(... ctx, Object evt) throws Exception;
+							void exceptionCaught(... ctx, Throwable cause) throws Exception;
+							...
+						}
+						```
+						</script>
+					</section>
+
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## ChannelInboundHandlerAdapter
+						```java
+						class ChannelInboundHandlerAdapter extends ... implements ChannelInboundHandler {
+							void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+								ctx.fireChannelRegistered();
+							}
+							void channelActive(... ctx) throws E... {
+								ctx.fireChannelActive();
+							}
+							void channelRead(... ctx, Object msg) throws E... {
+								ctx.fireChannelRead(msg);
+							}
+							void channelReadComplete(... ctx) throws E... {
+								ctx.fireChannelReadComplete();
+							}
+							void exceptionCaught(... ctx, Throwable cause) throws E... {
+								ctx.fireExceptionCaught(cause);
+							}
+							...
+						}
+						```
+						</script>
+					</section>
+
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## SimpleChannelInboundHandler&lt;I&gt;
+						```java
+						public abstract class SimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter {
+							protected abstract void channelRead0(... ctx, I msg) throws Exception;
+							public void channelRead(C..H..Context ctx, Object msg) throws Exception {
+								boolean release = true;
+								try {
+									if (acceptInboundMessage(msg)) {
+										channelRead0(ctx, (I) msg);
+									} else {
+										release = false;
+										ctx.fireChannelRead(msg);
+									}
+								} finally {
+									if (autoRelease && release) { ReferenceCountUtil.release(msg); }
+								}
+							}
+						}
+						```
+						</script>
+					</section>
+
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## ChannelInitializer&lt;C extends Channel&gt;
+
+						> ChannelPipeline 초기화에 사용
+
+						```java
+						public abstract class ChannelInitializer<C extends Channel>
+								extends ChannelInboundHandlerAdapter {
+							protected abstract void initChannel(C ch) throws Exception;
+							@Override
+							public final void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+								ChannelPipeline pipeline = ctx.pipeline();
+								...
+								initChannel((C) ctx.channel());
+								pipeline.remove(this);
+								ctx.fireChannelRegistered();
+								...
+							}
+						}
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## ChannelInboundHandler 요약
+
+						* ```ChannelInboundHandler```: 인터페이스
+						* ```ChannelInboundHandlerAdapter```: 다음 핸들러에게 위임
+						* ```SimpleInboundHandler<I>```: 특정 타입의 메시지를 처리하고 버퍼해제하거나 위임
+						* ```ChannelInitializer<C extends Channel>```: 채널 파이프라인 초기화
+						</script>
+					</section>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## 참고자료
+					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
+					</script>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: false,
+				slideNumber: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return true || !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
