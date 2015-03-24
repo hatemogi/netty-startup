@@ -14,7 +14,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/aewol.css" id="theme">
+		<link rel="stylesheet" href="css/theme/aewol2.css" id="theme">
 
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -54,6 +54,7 @@
 					## Netty 시작하기: 두번째 시간
 					* 메모리 모델과 바이트 버퍼
 					* 파이프라인(```ChannelPipeline```) 활용
+					* ```ChannelInboundHandler```와 아이들
 
 					### 실습과 예제
 					* 텍스트 기반 채팅 서버 개발
@@ -63,7 +64,7 @@
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						## 메모리 모델과 바이트 버퍼
+						# 메모리 모델과 바이트 버퍼
 						* Netty에서 사용하는 ```ByteBuf```는 별도로 관리
 						* 성능 측면에서 GC부담을 최소화
 						* NIO의 ```ByteBuffer```와 같은 역할, 성능 최적화
@@ -128,7 +129,7 @@
 						</script>
 					</section>
 
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						<h2>연습문제: 누가 release()하나요 <i class="fa fa-question-circle"></i></h2>
 						```java
@@ -150,9 +151,56 @@ public void main() {
 						</script>
 					</section>
 
-					<section data-markdown class="code">
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h1/discard/</small>DiscardServerHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+class DiscardServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf buf = (ByteBuf) msg;
+        try {
+            // discard
+        } finally {
+            buf.release();
+        }
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+						</code></pre>
+					</section>
+
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h1/echo/</small>EchoServerHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+class EchoServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ctx.write(msg);
+    }
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+						</code></pre>
+					</section>
+
+					<section data-markdown>
 						<script type="text/template">
-						## 파생 버퍼 (Derived Buffer)
+						## 파생 버퍼 <small>Derived Buffer</small>
 						아래 메소드로 파생된 ```ByteBuf```는 원래 버퍼의 참조수를 공유
 						```java
 						public abstract class ByteBuf implements ReferenceCounted, ... {
@@ -162,7 +210,7 @@ public void main() {
 						  public abstract ByteBuf order(ByteOrder endianness);
 						}
 						```
-						* 파생될 때 참조수가 증가하지 않는다.
+						* 파생될 때 참조수가 증가하지 **않음**
 						* 그러므로, 다른 메소드에 넘길 때는 ```retain()``` 필요
 						</script>
 					</section>
@@ -181,13 +229,13 @@ public void main() {
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						## 채널 파이프라인의 활용
+						# 채널 파이프라인의 활용
 						* 각각의 채널에는 ```ChannelPipeline```이 있고
 						* 한 ```ChannelPipeline```에는 ```ChannelHandler``` 여러개
 						* ```ChannelPipeline``` 조립에 따라 ```ChannelHandler```를 다양하게 활용 가능
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## Channel
 						* 읽기, 쓰기, 연결(connect), 바인드(bind)등의 I/O 작업을 할 수 있는 요소 또는 네트워크 연결
@@ -205,7 +253,7 @@ public void main() {
 
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## ChannelHandler
 						* Netty의 핵심 요소!
@@ -220,7 +268,7 @@ public void main() {
 						```
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## ChannelPipeline
 						* ```Channel```에 드나드는 inbound / outbound 이벤트를 처리
@@ -238,29 +286,67 @@ public void main() {
 				</section>
 
 				<section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						# ChannelInboundHandler
+
+						> (채널로 들어오는) 인바운드(inbound) 이벤트를 담당하는 인터페이스
+
+						* ```ChannelInboundHandler```
+						* ```ChannelInboundHandlerAdapter```
+						* ```SimpleInboundHandler<I>```
+						* ```ChannelInitializer<C extends Channel>```
+						</script>
+					</section>
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## ChannelInboundHandler
 						```java
 						public interface ChannelInboundHandler extends ChannelHandler {
 							void channelRegistered(ChannelHandlerContext ctx) throws Exception;
-							void channelUnregistered(... ctx) throws Exception;
 							void channelActive(... ctx) throws Exception;
-							void channelInactive(... ctx) throws Exception;
 							void channelRead(... ctx, Object msg) throws Exception;
 							void channelReadComplete(... ctx) throws Exception;
 							void userEventTriggered(... ctx, Object evt) throws Exception;
-							void channelWritabilityChanged(... ctx) throws Exception;
 							void exceptionCaught(... ctx, Throwable cause) throws Exception;
+							...
 						}
 						```
 						</script>
 					</section>
-					<section data-markdown class="code">
+
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## ChannelInboundHandlerAdapter
+						```java
+						class ChannelInboundHandlerAdapter extends ... implements ChannelInboundHandler {
+							void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+								ctx.fireChannelRegistered();
+							}
+							void channelActive(... ctx) throws E... {
+								ctx.fireChannelActive();
+							}
+							void channelRead(... ctx, Object msg) throws E... {
+								ctx.fireChannelRead(msg);
+							}
+							void channelReadComplete(... ctx) throws E... {
+								ctx.fireChannelReadComplete();
+							}
+							void exceptionCaught(... ctx, Throwable cause) throws E... {
+								ctx.fireExceptionCaught(cause);
+							}
+							...
+						}
+						```
+						</script>
+					</section>
+
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## SimpleChannelInboundHandler&lt;I&gt;
 						```java
 						public abstract class SimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter {
+							protected abstract void channelRead0(... ctx, I msg) throws Exception;
 							public void channelRead(C..H..Context ctx, Object msg) throws Exception {
 								boolean release = true;
 								try {
@@ -274,9 +360,42 @@ public void main() {
 									if (autoRelease && release) { ReferenceCountUtil.release(msg); }
 								}
 							}
-							protected abstract void channelRead0(... ctx, I msg) throws Exception;
 						}
 						```
+						</script>
+					</section>
+
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## ChannelInitializer&lt;C extends Channel&gt;
+
+						> ChannelPipeline 초기화에 사용
+
+						```java
+						public abstract class ChannelInitializer<C extends Channel>
+								extends ChannelInboundHandlerAdapter {
+							protected abstract void initChannel(C ch) throws Exception;
+							@Override
+							public final void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+								ChannelPipeline pipeline = ctx.pipeline();
+								...
+								initChannel((C) ctx.channel());
+								pipeline.remove(this);
+								ctx.fireChannelRegistered();
+								...
+							}
+						}
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## ChannelInboundHandler 요약
+
+						* ```ChannelInboundHandler```: 인터페이스
+						* ```ChannelInboundHandlerAdapter```: 다음 핸들러에게 위임
+						* ```SimpleInboundHandler<I>```: 특정 타입의 메시지를 처리하고 버퍼해제하거나 위임
+						* ```ChannelInitializer<C extends Channel>```: 채널 파이프라인 초기화
 						</script>
 					</section>
 				</section>

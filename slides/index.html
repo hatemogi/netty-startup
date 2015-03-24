@@ -49,6 +49,15 @@
 					</p>
 				</section>
 
+				<section data-markdown>
+					<script type="text/template">
+					# 발표 자료
+
+					> ### https://hatemogi.github.io/netty-startup
+
+					</script>
+				</section>
+
 				<section>
 					<h2>
 						김대현
@@ -108,9 +117,9 @@
 						## 4시간 진행 주제
 
 						1. 비동기 개념, 기본 인터페이스(```Channel```) 정리
-						1. [메모리모델과 파이프라인](netty-02.html)
-						1. [쓰레드 모델, Future/Promise 활용](netty-03.html)
-						1. [각종 코덱과 WebSocket](netty-04.html)
+						1. [메모리모델과 파이프라인](2.html)
+						1. [쓰레드 모델, Future/Promise 활용](3.html)
+						1. [각종 코덱과 WebSocket](4.html)
 
 						#### 예제와 실습
 
@@ -406,7 +415,7 @@
 					</section>
 				</section>
 				<section data-markdown>
-					# 예제와 실습용 프로젝트
+					## 예제와 실습용 프로젝트
 
 					https://github.com/hatemogi/netty-startup
 
@@ -456,7 +465,7 @@ public final class DiscardServer {
 							<small>src/nettystartup/h1/discard/</small>DiscardServerHandler.java
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
-public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
+class DiscardServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buf = (ByteBuf) msg;
@@ -635,6 +644,13 @@ public class EchoServerHandlerTest {
 					* [The C10K problem](http://www.kegel.com/c10k.html)
 					* [Web Framework Benchmarks](http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext)
 					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+					## 다음 시간에는...
+
+					> https://hatemogi.github.io/netty-startup/2.html
 					</script>
 				</section>
 			</div>
