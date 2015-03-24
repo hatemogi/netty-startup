@@ -223,7 +223,16 @@
 					<section data-markdown>
 						<script type="text/template">
 						## 본격 개발에 앞서: AttributeMap
-						* Channel이나 ChannelHandler에 속성 붙이기
+						* Channel이나 ChannelHandler에 속성 바인딩
+
+						```java
+						static final AttributeKey<String> nickAttr =
+								AttributeKey.newInstance("nickname");
+						...
+						String nickname = ch.attr(nickAttr).get();
+						...
+						ch.attr(nickAttr).set(nickname);
+						```
 						</script>
 					</section>
 				</section>
@@ -234,8 +243,8 @@
 						# 실습: 텍스트 기반 채팅 서버
 
 						* ChatServer.java
-						* ChatServerHandler.java
 						* ChatMessage.java
+						* ChatServerHandler.java
 						* ChatMessageCodec.java
 						</script>
 					</section>
@@ -347,6 +356,25 @@ public class ChatServerHandler extends SimpleChannelInboundHandler&lt;ChatMessag
       ctx.write(M("ERR", null, "unknown command -> " + msg.command));
     }
   }
+}
+						</code></pre>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h3/</small>ChatMessageCodec.java
+						</h2>
+						<blockquote><code>ChatMessage</code>와 <code>String</code>간 변환 담당</blockquote>
+						<pre><code class="java" data-trim contenteditable>
+class ChatMessageCodec extends MessageToMessageCodec&lt;String, ChatMessage&gt; {
+    @Override
+    protected void encode(C..H..Context ctx, ChatMessage msg, List&lt;Object&gt; out) throws Exception {
+        out.add(msg.toString() + "\n");
+    }
+
+    @Override
+    protected void decode(C..H..Context ctx, String line, List&lt;Object&gt; out) throws Exception {
+        out.add(ChatMessage.parse(line));
+    }
 }
 						</code></pre>
 					</section>
