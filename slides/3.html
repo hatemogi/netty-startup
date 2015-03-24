@@ -17,7 +17,7 @@
 		<link rel="stylesheet" href="css/theme/aewol.css" id="theme">
 
 		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="lib/css/darkula.css">
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 		<!-- Printing and PDF exports -->
@@ -42,7 +42,7 @@
 			<div class="slides">
 				<section class="cover">
 					<h1>Netty 시작하기 (3)</h1>
-					<h3>쓰레드 모델과 채널 퓨처/프로미스</h3>
+					<h3>깔끔한 쓰레드 모델과 채널퓨처&amp;프로미스</h3>
 					<p class="name">
 						<a href="http://hatemogi.com">김대현</a><br/>
 						<a href="http://twitter.com/hatemagi">@hatemogi</a>
@@ -60,10 +60,259 @@
 					</script>
 				</section>
 
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# 쓰레드가 무엇인가요?
+
+						* 멀티 프로세스와 멀티 쓰레드의 차이?
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 멀티쓰레드 처리가 어려운 이유
+						* 동기화를 놓치면 -> 경쟁조건 발생
+						* 동기화가 과도하면 -> 성능병목, 데드락 발생
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# Netty의 깔끔한 쓰레드 모델
+						* ChannelHandler의 메소드는 동시에 불리지 않는다
+						* 채널은 한 쓰레드에 할당되며, 그 쓰레드에서만 호출
+						* 등록된 ```ChannelFutureLister```도 그 쓰레드가 호출한다
+
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 쓰레드 모델을 풀어서 설명하면
+						* 각 채널은 싱글쓰레드로 운영
+						* 쓰레드 안전성(thread-safety)를 신경쓰지 않아도 됨
+
+						### <i class="fa fa-bomb"></i> 주의
+						* 채널핸들러 등록시에 별도 쓰레드를 지정할 수도 있는데,
+						* 이 경우 다른 핸들러는 다른 쓰레드가 호출할 수 있음
+						* 즉, 쓰레드 안전성을 고려해야함
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# 텍스트 기반 채팅 서버 프로토콜
+
+						* 실습 목적의 UTF-8 텍스트 기반 간단 채팅
+						* 클라이언트는 ```telnet``` 활용
+						* 서버 전체에 통합 대화방 한개
+						* 연결하면 서버가 임의 대화명 발급 (변경가능)
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 채팅 프로토콜 <small>project/doc/protocol.md</small>
+
+						* ```메시지```: UTF-8 텍스트, "\n" ;
+						* ```메시지``` = ```명령어절``` | ```명령어절```, " ", ```텍스트``` ;
+						* ```명령어절``` = ```명령어``` | ```명령어```, ":", ```대화명``` ;
+
+						### 프로토콜 예
+
+						```nohighlight
+						HELO steve\n
+						JOIN:david\n
+						SEND 안녕하세요\n
+						FROM:david 반갑습니다\n
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 클라이언트가 보내는 메시지
+
+						```nohighlight
+						SEND [텍스트]
+						NICK [새 대화명]
+						PING
+						QUIT
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 서버가 보내는 메시지
+
+						```nohighlight
+						HAVE:[대화명]
+						HELO:[발급 대화명]
+						PONG
+						FROM:[대화명] [텍스트]
+						JOIN:[대화명]
+						LEFT:[대화명]
+						BYE:[대화명]
+						```
+						</script>
+					</section>
+					<section>
+					<h2>대화의 예</h2>
+						<table>
+							<tr>
+								<th>#</th>
+								<th>서버가 보냄</th>
+								<th>클라이언트</th>
+							</tr>
+							<tr>
+								<td>1</td>
+								<td>HAVE:steve</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>HELO:david</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td></td>
+								<td>NICK hatemogi</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>NICK:david hatemogi</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td></td>
+								<td>SEND 안녕하세요</td>
+							</tr>
+							<tr>
+								<td>6</td>
+								<td>FROM:hatemogi 안녕하세요</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>7</td>
+								<td>FROM:steve 반갑습니다</td>
+								<td></td>
+							</tr>
+						</table>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 본격 개발에 앞서: AttributeMap
+						* Channel이나 ChannelHandler에 속성 붙이기
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# 실습: 텍스트 기반 채팅 서버
+
+						* ChatServer.java
+						* ChatServerHandler.java
+						* ChatMessage.java
+						* ChatMessageCodec.java
+						</script>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h3/</small>ChatServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public final class ChatServer {
+  public static void main(String[] args) throws Exception {
+    NettyStartupUtil.runServer(8030, new ChannelInitializer&lt;SocketChannel&gt;() {
+      @Override
+      protected void initChannel(SocketChannel ch) throws Exception {
+        ch.pipeline()
+          .addLast(new LineBasedFrameDecoder(1024, true, true))
+          .addLast(new StringDecoder(CharsetUtil.UTF_8),
+                   new StringEncoder(CharsetUtil.UTF_8))
+          .addLast(new ChatMessageCodec(),
+                   new LoggingHandler(LogLevel.INFO))
+          .addLast(new ChatServerHandler());
+      }
+    });
+  }
+}
+						</code></pre>
+						<blockquote>LineBasedDecoder, StringDecoder, StringDecoder는 마지막 시간에 설명</blockquote>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h3/</small>ChatMessage.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public class ChatMessage {
+    public final String command;
+    public final String nickname;
+    public String text;
+
+    public String toString() { ... }
+    public static ChatMessage parse(String line) { ... }
+    ...
+}
+						</code></pre>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h3/</small>ChatServerHandler.java (1)
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public class ChatServerHandler extends SimpleChannelInboundHandler&lt;ChatMessage&gt; {
+  @Override
+  public void channelActive(ChannelHandlerContext ctx) {
+    helo(ctx.channel());
+  }
+  @Override
+  public void channelInactive(final ChannelHandlerContext ctx) {
+    channels.remove(ctx.channel());
+    channels.writeAndFlush(M("LEFT", nickname(ctx)));
+    nicknameProvider.release(nickname(ctx));
+  }
+  ... 다음 슬라이드에 계속 ...
+}
+						</code></pre>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>src/nettystartup/h3/</small>ChatServerHandler.java (2)
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public class ChatServerHandler extends SimpleChannelInboundHandler&lt;ChatMessage&gt; {
+  ... 이전 슬라이드에서 이어짐 ...
+  @Override
+  protected void channelRead0(ChannelHandlerContext ctx, ChatMessage msg) throws Exception {
+    if ("PING".equals(msg.command)) {
+      ctx.write(M("PONG"));
+    } else if ("QUIT".equals(msg.command)) {
+      ctx; /* TODO: 실습구현 (1)*/
+    } else if ("SEND".equals(msg.command)) {
+      channels; /* TODO: 실습구현 (2) */
+    } else if ("NICK".equals(msg.command)) {
+      changeNickname(ctx, msg);
+    } else {
+      ctx.write(M("ERR", null, "unknown command -> " + msg.command));
+    }
+  }
+}
+						</code></pre>
+					</section>
+
+				</section>
+
 				<section data-markdown>
 					<script type="text/template">
 					## 참고자료
-					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
+					* [New and Noteworthy in Netty 4.0](http://netty.io/wiki/new-and-noteworthy-in-4.0.html)
 					</script>
 				</section>
 
@@ -71,7 +320,7 @@
 					<script type="text/template">
 					## 다음 시간에는...
 
-					> https://hatemogi.github.io/netty-startup/4.html
+					> http://hatemogi.github.io/netty-startup/4.html
 					</script>
 				</section>
 

@@ -54,7 +54,6 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ChatMessage msg) throws Exception {
-        System.out.println(nickname(ctx) + "> " + msg);
         if ("PING".equals(msg.command)) {
             ctx.write(M("PONG"));
         } else if ("QUIT".equals(msg.command)) {
