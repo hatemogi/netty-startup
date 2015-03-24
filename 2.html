@@ -57,7 +57,7 @@
 					* ```ChannelInboundHandler```와 아이들
 
 					### 실습과 예제
-					* 텍스트 기반 채팅 서버 개발
+					* 웹서버 개발
 					</script>
 				</section>
 
@@ -260,7 +260,7 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 						* Netty의 I/O 이벤트를 처리하는 인터페이스
 						* ```ChannelInboundHandlerAdapter``` / ```ChannelOutboundHandlerAdapter```
 
-						### *전체* 메소드
+						### "전체" 메소드
 						```java
 						void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 						void handlerAdded(ChannelHandlerContext ctx)
@@ -273,6 +273,7 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 						## ChannelPipeline
 						* ```Channel```에 드나드는 inbound / outbound 이벤트를 처리
 						* [Intercepting Filter 패턴](http://www.oracle.com/technetwork/java/interceptingfilter-142169.html) 처리, ```ChannelHandler``` 리스트
+						* 파이프라인 동적 변경 가능
 
 						### 주요 메소드
 						```java
@@ -404,6 +405,14 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 					<script type="text/template">
 					## 참고자료
 					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## 다음 시간에는...
+
+					> https://hatemogi.github.io/netty-startup/3.html
 					</script>
 				</section>
 
