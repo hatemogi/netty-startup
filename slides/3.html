@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Netty 시작하기 (2)</title>
+		<title>Netty 시작하기 (3)</title>
 
 		<meta name="description" content="자바 환경의 고성능 비동기 네트워크 프레임워크인 Netty를 이해하고, 간단한 예제를 만들어봅니다.">
 		<meta name="author" content="김대현">
@@ -41,8 +41,8 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section class="cover">
-					<h1>Netty 시작하기 (2)</h1>
-					<h3>메모리 모델과 파이프라인</h3>
+					<h1>Netty 시작하기 (3)</h1>
+					<h3>쓰레드 모델과 채널 퓨처/프로미스</h3>
 					<p class="name">
 						<a href="http://hatemogi.com">김대현</a><br/>
 						<a href="http://twitter.com/hatemagi">@hatemogi</a>
@@ -51,9 +51,9 @@
 
 				<section data-markdown>
 					<script type="text/template">
-					## Netty 시작하기 두번째 시간
-					* 메모리 모델과 Reference-Counted Object
-					* 파이프라인(```ChannelPipeline```)의 기초와 활용
+					## Netty 시작하기: 세번째 시간
+					* Netty의 쓰레드 모델
+					* ChannelFuture와 ChannelPromise
 
 					### 실습과 예제
 					* 텍스트 기반 채팅 서버 개발
@@ -62,10 +62,16 @@
 
 				<section data-markdown>
 					<script type="text/template">
-					## 메모리 모델과 ByteBuf
-					* Netty에서 사용하는 ByteBuf는 별도로 관리
-					* 성능 측면에서 GC부담을 최소화
-					* NIO의 ```ByteBuffer```와 같은 역할이지만 성능 튜닝
+					## 참고자료
+					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					## 다음 시간에는...
+
+					> https://hatemogi.github.io/netty-startup/4.html
 					</script>
 				</section>
 
@@ -98,6 +104,14 @@
 					{ src: 'plugin/notes/notes.js', async: true }
 				]
 			});
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-61112360-2', 'auto');
+ga('send', 'pageview');
 
 		</script>
 
