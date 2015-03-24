@@ -11,7 +11,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-public class HttpStaticFileHandler extends SimpleChannelInboundHandler<HttpRequest> {
+public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private String path;
     private String filename;
 
@@ -21,7 +21,7 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler<HttpReque
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, HttpRequest req) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
         // TODO: [실습2-1] sendStaticFile메소드를 써서 구현합니다. "/" 요청이 아닌 경우에는 어떻게 할까요?
     }
 
