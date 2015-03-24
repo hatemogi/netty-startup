@@ -99,15 +99,32 @@
 						* 즉, 쓰레드 안전성을 고려해야함
 						</script>
 					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 채널과 쓰레드의 관계
+
+						* ```Channel```은 ```EventLoop```에 등록
+						* ```EventLoop```는 Channel에 하나의 쓰레드를 할당
+						* 해당 쓰레드 입장에서는 여러개의 ```Channel```을 처리
+						* 그러나 ```Channel```입장에서는 단일 쓰레드
+						</script>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# ChannelFuture &amp; Promise
+						</script>
+					</section>
 				</section>
 
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						# 텍스트 기반 채팅 서버 프로토콜
+						# 실습: 채팅 서버 프로토콜
 
 						* 실습 목적의 UTF-8 텍스트 기반 간단 채팅
-						* 클라이언트는 ```telnet``` 활용
+						* 클라이언트는 우선 ```telnet``` 활용
 						* 서버 전체에 통합 대화방 한개
 						* 연결하면 서버가 임의 대화명 발급 (변경가능)
 						</script>
@@ -334,6 +351,27 @@ public class ChatServerHandler extends SimpleChannelInboundHandler&lt;ChatMessag
 						</code></pre>
 					</section>
 
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## 텔넷 접속 확인
+						```nohighlight
+						$ telnet localhost 8030
+						Trying ::1...
+						Connected to localhost.
+						Escape character is '^]'.
+						HELO:Russel
+						PING
+						PONG
+						NICK hatemogi
+						NICK:Russel hatemogi
+						SEND hello!
+						FROM:hatemogi hello!
+						QUIT
+						BYE:hatemogi
+						Connection closed by foreign host.
+						```
+						</script>
+					</section>
 				</section>
 
 				<section data-markdown>
