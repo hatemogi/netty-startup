@@ -70,7 +70,7 @@
 
 				<section>
 					<section>
-						<h2>과정</h2>
+						<h1>과정</h1>
 						<p>
 							<ol>
 								<li>Netty의 기본 설명</li>
@@ -105,7 +105,7 @@
 
 					<section data-markdown>
 						<script type="text/template">
-						## 4시간 진행순서
+						## 4시간 진행 주제
 
 						1. 비동기 개념, 기본 인터페이스(```Channel```) 정리
 						1. [메모리모델과 파이프라인](netty-02.html)
@@ -122,7 +122,7 @@
 					</section>
 
 					<section>
-						<h2>매 시간 진행순서</h2>
+						<h2>매 시간 구조</h2>
 						<img src="img/pair.jpg" style="float: right; width: 60%;"/>
 						<p data-markdown>
 						1. 설명
@@ -144,7 +144,7 @@
 				</section>
 				<section>
 					<section data-markdown>
-					## 왜 Netty를 쓸까?
+					# 왜 Netty를 쓸까?
 
 					* 고성능
 					* 쓰기 편하다 (유연하고 쉽다)
@@ -180,7 +180,7 @@
 
 				<section>
 					<section data-markdown>
-					## 동기와 비동기
+					# 동기와 비동기
 					* Synchronous vs. Asynchronous
 					* Blocking vs. Non-blocking
 
@@ -244,7 +244,7 @@
 
 				<section>
 					<section>
-						<h2>Event-Driven Programming</h2>
+						<h1>Event-Driven Programming</h1>
 						<blockquote>
 							In computer programming, event-driven programming is a programming paradigm in which the flow of the program is determined by events such as user actions (mouse clicks, key presses), sensor outputs, or messages from other programs/threads. Event-driven programming is the dominant paradigm used in graphical user interfaces and other applications (e.g. JavaScript web applications) that are centered on performing certain actions in response to user input.
 							<cite><a href="http://en.wikipedia.org/wiki/Event-driven_programming">Wikipedia</a></cite>
@@ -296,7 +296,7 @@
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						## Netty의 ```Channel```관련 주요 인터페이스
+						# Netty의 핵심 인터페이스
 
 						* ```Channel```
 						* ```ChannelFuture```
@@ -306,7 +306,7 @@
 						* ```EventLoop```
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## Channel
 						* 읽기, 쓰기, 연결(connect), 바인드(bind)등의 I/O 작업을 할 수 있는 요소 또는 네트워크 연결
@@ -324,7 +324,7 @@
 
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## ChannelFuture
 						* ```Channel```의 I/O 작업의 결과
@@ -339,7 +339,7 @@
 						```
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## ChannelHandler
 						* Netty의 핵심 요소!
@@ -354,7 +354,7 @@
 						```
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## ChannelHandlerContext
 						* ```ChannelHandler```는 ```ChannelHandlerContext```를 통해
@@ -370,7 +370,7 @@
 						```
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## ChannelPipeline
 						* ```Channel```에 드나드는 inbound / outbound 이벤트를 처리
@@ -386,7 +386,7 @@
 						```
 						</script>
 					</section>
-					<section data-markdown class="code">
+					<section data-markdown class="small-code">
 						<script type="text/template">
 						## EventLoop
 						* 등록된 ```Channel```들의 *모든 I/O 작업*을 처리
@@ -406,7 +406,7 @@
 					</section>
 				</section>
 				<section data-markdown>
-					## 예제와 실습용 프로젝트
+					# 예제와 실습용 프로젝트
 
 					https://github.com/hatemogi/netty-startup
 
@@ -417,14 +417,14 @@
 				</section>
 				<section>
 					<section data-markdown>
-					## 첫 예제: DiscardServer
+					# 첫 예제: DiscardServer
 
 					> src/nettystartup/h1/discard
 
 					* DiscardServer.java
 					* DiscardServerHandler.java
 					</section>
-					<section class="code">
+					<section class="small-code">
 						<h2>
 							<small>src/nettystartup/h1/discard/</small>DiscardServer.java
 						</h2>
@@ -451,7 +451,7 @@ public final class DiscardServer {
 						</code></pre>
 					</section>
 
-					<section class="code">
+					<section class="small-code">
 						<h2>
 							<small>src/nettystartup/h1/discard/</small>DiscardServerHandler.java
 						</h2>
@@ -498,7 +498,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
 				<section>
 					<section data-markdown>
-					## Netty와 유닛테스팅
+					# Netty와 유닛테스팅
 
 					* EmbeddedChannel을 활용
 
@@ -525,7 +525,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 						```
 						</script>
 					</section>
-					<section class="code">
+					<section class="small-code">
 						<h2>
 							<small>test/.../h1/discard/</small>DiscardServerHandlerTest.java
 						</h2>
@@ -549,7 +549,7 @@ public class DiscardServerHandlerTest {
 
 				<section>
 					<section>
-						<h2>첫번째 실습: EchoServer</h2>
+						<h1>첫번째 실습: EchoServer</h1>
 						<img src="img/pair.jpg" style="width: 40%; float: right;"/>
 						<p data-markdown>
 						* ```EchoServer```
@@ -557,7 +557,7 @@ public class DiscardServerHandlerTest {
 						* ```EchoServerHandlerTest```
 						</p>
 					</section>
-					<section class="code">
+					<section class="small-code">
 						<h2>
 							<small>src/nettystartup/h1/echo/</small>EchoServer.java
 						</h2>
@@ -582,7 +582,7 @@ public final class EchoServer {
 						</code></pre>
 					</section>
 
-					<section class="code">
+					<section class="small-code">
 						<h2>
 							<small>src/nettystartup/h1/echo/</small>EchoServerHandler.java
 						</h2>
@@ -605,7 +605,7 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 						</code></pre>
 					</section>
 
-				  <section class="code">
+				  <section class="small-code">
 						<h2>
 							<small>test/nettystartup/h1/echo/</small>EchoServerHandlerTest.java
 						</h2>
