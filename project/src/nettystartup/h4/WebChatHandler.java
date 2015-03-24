@@ -8,9 +8,7 @@ class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         ChatServerHandler chatHandler = new ChatServerHandler();
-        ctx.pipeline()
-                .addAfter("wsHandler", "wsCodec", new WebSocketChatCodec())
-                .addAfter("wsCodec", "chatHandler", chatHandler);
+        // TODO: [실습4-1] 파이프라인에 코덱과 핸들러를 추가해서 WebSocket과 ChatServerHandler를 연결합니다.
         chatHandler.helo(ctx.channel());
     }
 

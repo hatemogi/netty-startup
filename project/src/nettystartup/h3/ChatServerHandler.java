@@ -55,14 +55,11 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ChatMessage msg) throws Exception {
         if ("PING".equals(msg.command)) {
-            ctx.write(M("PONG"));
+            // [실습3-1] PING 명령어에 대한 응답을 내보냅니다
         } else if ("QUIT".equals(msg.command)) {
-            ctx.writeAndFlush(M("BYE", nickname(ctx)))
-                    .addListener(ChannelFutureListener.CLOSE);
+            // [실습3-2] QUIT 명령어를 처리하고 BYE를 응답합니다. 연결도 끊습니다.
         } else if ("SEND".equals(msg.command)) {
-            channels.writeAndFlush(
-                    M("FROM", nickname(ctx), msg.text)
-            );
+            // [실습3-3] 클라이언트로부터 대화 텍스트가 왔습니다. 모든 채널에 방송합니다.
         } else if ("NICK".equals(msg.command)) {
             changeNickname(ctx, msg);
         } else {

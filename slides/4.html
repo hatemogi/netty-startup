@@ -59,6 +59,37 @@
 					* 웹기반 채팅 서버 개발
 					</script>
 				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# Netty의 풍부한 코덱
+						</script>
+					</section>
+					</section>
+					<section class="small-code">
+						<h2>
+							<small>지난 시간의</small> ChatServer.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+public final class ChatServer {
+  public static void main(String[] args) throws Exception {
+    NettyStartupUtil.runServer(8030, new ChannelInitializer&lt;SocketChannel&gt;() {
+      @Override
+      protected void initChannel(SocketChannel ch) throws Exception {
+        ch.pipeline()
+          .addLast(new LineBasedFrameDecoder(1024, true, true))
+          .addLast(new StringDecoder(CharsetUtil.UTF_8),
+                   new StringEncoder(CharsetUtil.UTF_8))
+          .addLast(new ChatMessageCodec(),
+                   new LoggingHandler(LogLevel.INFO))
+          .addLast(new ChatServerHandler());
+      }
+    });
+  }
+}
+						</code></pre>
+					</section>
+				</section>
 				<section data-markdown>
 					<script type="text/template">
 					## 참고자료

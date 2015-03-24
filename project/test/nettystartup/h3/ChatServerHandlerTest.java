@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -54,6 +55,7 @@ public class ChatServerHandlerTest {
     @Test
     public void SEND() throws Exception {
         m = writeAndRead(new ChatMessage("SEND", null, "보내는 메지지"));
+        assertThat("SEND 응답이 없네요", m, notNullValue());
         assertThat("SEND를 받으면 FROM을 응답합니다",
                 m.command, equalTo("FROM"));
         assertThat("FROM에는 누가 보낸 메시지인지 nickname이 덧붙습니다",

@@ -10,7 +10,6 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-@ChannelHandler.Sharable
 public class HttpNotFoundHandler extends SimpleChannelInboundHandler<HttpRequest> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpRequest req) throws Exception {
@@ -23,7 +22,7 @@ public class HttpNotFoundHandler extends SimpleChannelInboundHandler<HttpRequest
         res.headers().set(CONTENT_LENGTH, buf.readableBytes());
         ctx.writeAndFlush(res).addListener((ChannelFuture f) -> {
             if (!HttpHeaders.isKeepAlive(req)) {
-                ctx.channel().close();
+                f.channel().close();
             }
         });
     }
