@@ -94,6 +94,7 @@ public final class ChatServer {
 						<script type="text/template">
 						# 실습: 웹소켓 기반 채팅 서버
 
+						> ```ChannelPipeline```을 잘 조립해서 세번째 시간에 개발한 ```ChatServerHandler```를 그대로 다시 사용해서 웹소켓 기반 채팅 서버를 만들어봅시다. 웹브라우저용 클라이언트는 잘 준비돼 있습니다.
 						</script>
 					</section>
 					<section data-background="img/ex4-2.png" data-background-size="800px">
@@ -125,7 +126,7 @@ public class WebChatServer {
 					</section>
 					<section class="small-code">
 						<h2>
-							<small>src/nettystartup/h4/</small>WebChatServer.java
+							<small>src/nettystartup/h4/</small>WebChatHandler.java
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
 class WebChatHandler extends SimpleChannelInboundHandler&lt;WebSocketFrame&gt; {
@@ -146,12 +147,34 @@ class WebChatHandler extends SimpleChannelInboundHandler&lt;WebSocketFrame&gt; {
 					</section>
 					<section class="small-code">
 						<h2>
-							<small>src/nettystartup/h4/</small>WebChatServer.java
+							<small>src/nettystartup/h4/</small>WebSocketChatCodec.java
 						</h2>
 						<pre><code class="java" data-trim contenteditable>
+class WebSocketChatCodec extends
+        MessageToMessageCodec&lt;TextWebSocketFrame, ChatMessage&gt; {
+    @Override
+    protected void encode(C..H..Context ctx, ChatMessage msg, List&lt;Object&gt; out) throws E.. {
+        out.add(new TextWebSocketFrame(msg.toString()));
+    }
+
+    @Override
+    protected void decode(C..H..Context ctx, TextWebSocketFrame msg, List&lt;Object&gt; out) throws E.. {
+        out.add(ChatMessage.parse(msg.text()));
+    }
+}
 						</code></pre>
 					</section>
 
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						# 도전과제
+
+						> 시간이 더 있다면, 세번째 시간에 개발한 채팅 서버에 TCP 연결로 프록시 처리를 하는 웹소켓 채팅서비스를 만들어봅시다.
+						</script>
+					</section>
 				</section>
 				<section data-markdown>
 					<script type="text/template">
