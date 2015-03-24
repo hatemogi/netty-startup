@@ -54,12 +54,13 @@ public class ChatServerHandlerTest {
 
     @Test
     public void SEND() throws Exception {
-        m = writeAndRead(new ChatMessage("SEND", null, "보내는 메지지"));
+        m = writeAndRead(new ChatMessage("SEND", null, "보내는 메시지"));
         assertThat("SEND 응답이 없네요", m, notNullValue());
         assertThat("SEND를 받으면 FROM을 응답합니다",
                 m.command, equalTo("FROM"));
         assertThat("FROM에는 누가 보낸 메시지인지 nickname이 덧붙습니다",
                 m.nickname, equalTo(nickname));
+        assertThat("FROM에는 메시지 내용이 포함됩니다", m.text, equalTo("보내는 메시지"));
     }
 
     @Test
