@@ -6,8 +6,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import nettystartup.h2.NettyStartupUtil;
-import nettystartup.h3.HttpNotFoundHandler;
-import nettystartup.h3.HttpStaticFileHandler;
+import nettystartup.h2.http.HttpNotFoundHandler;
+import nettystartup.h2.http.HttpStaticFileHandler;
 
 public class WebChatServer {
     static String index = System.getProperty("user.dir") + "/res/h4/index.html";

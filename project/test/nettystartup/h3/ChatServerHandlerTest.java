@@ -1,4 +1,4 @@
-package nettystartup.h2.chat;
+package nettystartup.h3;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Before;

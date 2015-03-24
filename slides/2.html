@@ -260,7 +260,7 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 						* Netty의 I/O 이벤트를 처리하는 인터페이스
 						* ```ChannelInboundHandlerAdapter``` / ```ChannelOutboundHandlerAdapter```
 
-						### *전체* 메소드
+						### "전체" 메소드
 						```java
 						void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 						void handlerAdded(ChannelHandlerContext ctx)
@@ -273,6 +273,7 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 						## ChannelPipeline
 						* ```Channel```에 드나드는 inbound / outbound 이벤트를 처리
 						* [Intercepting Filter 패턴](http://www.oracle.com/technetwork/java/interceptingfilter-142169.html) 처리, ```ChannelHandler``` 리스트
+						* 파이프라인 동적 변경 가능
 
 						### 주요 메소드
 						```java

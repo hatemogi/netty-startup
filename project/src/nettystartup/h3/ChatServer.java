@@ -1,4 +1,4 @@
-package nettystartup.h2.chat;
+package nettystartup.h3;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -10,7 +10,7 @@ import nettystartup.h2.NettyStartupUtil;
 
 public final class ChatServer {
     public static void main(String[] args) throws Exception {
-        NettyStartupUtil.runServer(8022, new ChannelInitializer<SocketChannel>() {
+        NettyStartupUtil.runServer(8030, new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(new LineBasedFrameDecoder(1024, true, true))

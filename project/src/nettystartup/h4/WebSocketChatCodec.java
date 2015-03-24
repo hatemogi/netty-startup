@@ -3,7 +3,7 @@ package nettystartup.h4;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import nettystartup.h2.chat.ChatMessage;
+import nettystartup.h3.ChatMessage;
 
 import java.util.List;
 

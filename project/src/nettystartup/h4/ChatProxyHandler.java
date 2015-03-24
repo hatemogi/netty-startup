@@ -1,7 +1,7 @@
 package nettystartup.h4;
 
 import io.netty.channel.*;
-import nettystartup.h2.chat.ChatMessage;
+import nettystartup.h3.ChatMessage;
 
 class ChatProxyHandler extends SimpleChannelInboundHandler<ChatMessage> {
     private Channel wsChannel;

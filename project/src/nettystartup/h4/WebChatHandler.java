@@ -2,7 +2,7 @@ package nettystartup.h4;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.*;
-import nettystartup.h2.chat.ChatServerHandler;
+import nettystartup.h3.ChatServerHandler;
 
 class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     @Override

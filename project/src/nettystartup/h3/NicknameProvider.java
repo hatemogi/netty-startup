@@ -1,4 +1,4 @@
-package nettystartup.h2.chat;
+package nettystartup.h3;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -1,4 +1,4 @@
-package nettystartup.h3;
+package nettystartup.h2.http;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;

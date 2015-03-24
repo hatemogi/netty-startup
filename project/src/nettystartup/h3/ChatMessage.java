@@ -1,4 +1,4 @@
-package nettystartup.h2.chat;
+package nettystartup.h3;
 
 public class ChatMessage {
     public final String command;

@@ -1,4 +1,4 @@
-package nettystartup.h3;
+package nettystartup.h2.http;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -8,10 +8,10 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import nettystartup.h2.NettyStartupUtil;
 
 public class HttpStaticServer {
-    static String index = System.getProperty("user.dir") + "/res/h3/index.html";
+    static String index = System.getProperty("user.dir") + "/res/h2/index.html";
 
     public static void main(String[] args) throws Exception {
-        NettyStartupUtil.runServer(8030, new ChannelInitializer<SocketChannel>() {
+        NettyStartupUtil.runServer(8020, new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) {
                 ChannelPipeline p = ch.pipeline();
