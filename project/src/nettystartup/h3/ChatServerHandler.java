@@ -11,8 +11,19 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
     static final AttributeKey<String> nickAttr = AttributeKey.newInstance("nickname");
     static final NicknameProvider nicknameProvider = new NicknameProvider();
 
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        // 이미 channel이 active인 상황에서
+        // 동적으로 이 핸들러가 등록될 때에는 channelActive가 불리지않습니다.
+        // [실습4-2]를 위해서 여기서도 helo를 부릅니다.
+
+        if (ctx.channel().isActive()) {
+            helo(ctx.channel());
+        }
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        // 클라이언트가 연결되면 수행
         helo(ctx.channel());
     }
 
