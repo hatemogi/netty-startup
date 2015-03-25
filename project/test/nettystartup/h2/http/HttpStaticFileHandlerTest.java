@@ -14,11 +14,9 @@ public class HttpStaticFileHandlerTest {
     public void index() throws Exception {
         String index = HttpStaticServer.index;
         EmbeddedChannel ch = new EmbeddedChannel(new HttpStaticFileHandler("/", index));
-        ch.writeInbound(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/"));
-        ch.writeInbound(new DefaultLastHttpContent());
+        ch.writeInbound(new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/"));
         assertThat(ch.readOutbound(), instanceOf(HttpResponse.class));
         FileRegion content = (FileRegion) ch.readOutbound();
         assertTrue(content.count() > 0);
-        assertThat(ch.readInbound(), instanceOf(LastHttpContent.class));
     }
 }
