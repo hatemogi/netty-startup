@@ -351,12 +351,14 @@
 						<script type="text/template">
 						## ChannelFuture
 						* ```Channel```의 I/O 작업의 결과
-						* ```ChannelFutureListener```를 등록해서 결과에 따른 작업 실행
+						* ```ChannelFutureListener```를 등록 결과에 따른 작업
 
 						### 핵심 메소드
 						```java
 						ChannelFuture addListener(GenericFutureListener<...> listener)
 						Channel       channel()
+						boolean       isSuccess();
+						Throwable     cause();
 						ChannelFuture await()
 						ChannelFuture sync()
 						```
@@ -367,7 +369,8 @@
 						## ChannelHandler
 						* Netty의 핵심 요소!
 						* Netty의 I/O 이벤트를 처리하는 인터페이스
-						* ```ChannelInboundHandlerAdapter``` / ```ChannelOutboundHandlerAdapter```
+						* ```ChannelInboundHandlerAdapter```
+						* ```ChannelOutboundHandlerAdapter```
 
 						### *전체* 메소드
 						```java
@@ -389,6 +392,7 @@
 						Channel               channel()
 						ChannelPipeline       pipeline()
 						ChannelFuture         write(Object msg)
+						ChannelHandlerContext fireChannelActive(Object msg)
 						ChannelHandlerContext fireChannelRead(Object msg)
 						```
 						</script>
@@ -432,12 +436,17 @@
 				<section data-markdown>
 					## 예제와 실습용 프로젝트
 
-					https://github.com/hatemogi/netty-startup
+					> https://github.com/hatemogi/netty-startup
 
 					### Git clone
 					```bash
 					git clone https://github.com/hatemogi/netty-startup
 					```
+
+					#### Netty 4.x JavaDoc
+
+					* http://netty.io/4.0/api/index.html
+
 				</section>
 				<section>
 					<section data-markdown>
@@ -482,7 +491,7 @@ public final class DiscardServer {
 						<pre><code class="java" data-trim contenteditable>
 class DiscardServerHandler extends ChannelInboundHandlerAdapter {
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(C..H..Context ctx, Object msg) throws Exception {
         ByteBuf buf = (ByteBuf) msg;
         try {
             // discard
@@ -491,7 +500,7 @@ class DiscardServerHandler extends ChannelInboundHandlerAdapter {
         }
     }
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    public void exceptionCaught(C..H..Context ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
     }
@@ -643,12 +652,23 @@ public class EchoServerHandlerTest {
         ch.writeInbound(in);
         ByteBuf r = (ByteBuf)ch.readOutbound();
         releaseLater(r);
-        assertThat(r.refCnt(), is(1));
-        assertThat(r.toString(CharsetUtil.UTF_8), equalTo(m));
+        assertThat("응답이 없습니다", r, notNullValue());
+        assertThat("참조수는 1이어야 합니다",r.refCnt(), is(1));
+        assertThat("수신한 텍스트가 결과로 와야합니다", r.toString(CharsetUtil.UTF_8), equalTo(m));
     }
 }
 						</code></pre>
 					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 실습 정리
+
+						* Netty로 네트워크 서버를 만들어 봤습니다.
+						* ChannelHandler의 기초를 익혔습니다.
+						* 메모리 모델은 다음 시간에 설명합니다.
+						</script>
+					</section>
+
 			  </section>
 				<section data-markdown>
 					<script type="text/template">
@@ -659,6 +679,7 @@ public class EchoServerHandlerTest {
 					* [The C10K problem](http://www.kegel.com/c10k.html)
 					* [Web Framework Benchmarks](http://www.techempower.com/benchmarks/#section=data-r9&hw=i7&test=plaintext)
 					* [Reference Counted Objects](http://netty.io/wiki/reference-counted-objects.html)
+					* [Netty 4.x JavaDoc](http://netty.io/4.0/api/index.html)
 					</script>
 				</section>
 				<section data-markdown>

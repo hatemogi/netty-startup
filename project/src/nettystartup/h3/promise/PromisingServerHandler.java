@@ -1,6 +1,7 @@
 package nettystartup.h3.promise;
 
 import io.netty.channel.*;
+import io.netty.util.concurrent.Promise;
 
 class PromisingServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
@@ -8,19 +9,16 @@ class PromisingServerHandler extends SimpleChannelInboundHandler<String> {
         System.out.println(line);
         System.out.println("channelRead0: " + Thread.currentThread().getName());
         ctx.write("> " + line + "\n");
-        ChannelPromise p = ctx.newPromise();
-        Runnable block = () -> {
+        Promise<String> p = ctx.executor().newPromise();
+        new Thread(() -> {
             try {
                 Thread.sleep(5000);
                 System.err.println("new Thread: " + Thread.currentThread().getName());
-                p.setSuccess();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        };
-        new Thread(block).start();
+                p.setSuccess("hello from " + Thread.currentThread().getName());
+            } catch (InterruptedException e) { /* ignore */ }
+        }).start();
         p.addListener(f ->
-            System.out.println("listener:" + Thread.currentThread().getName())
+            System.out.println("[" + Thread.currentThread().getName() + "] listener got: " + f.get())
         );
     }
 

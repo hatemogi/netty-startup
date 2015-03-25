@@ -74,10 +74,12 @@
 					<section data-markdown>
 						<script type="text/template">
 						## io.netty.buffer.*
+						* ```java.nio.ByteBuffer```와 유사
 						* 커스텀 타입 개발가능
 						* 복합(composite) 버퍼 도입으로 버퍼 복사를 최소화
 						* 필요에 따라 버퍼 용량 **"자동"** 증가
 						* ```flip()```호출 필요없음
+						* 참조수 관리로 메모리 **수동** 해제 - 음?
 						</script>
 					</section>
 
@@ -201,7 +203,8 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 					<section data-markdown>
 						<script type="text/template">
 						## 파생 버퍼 <small>Derived Buffer</small>
-						아래 메소드로 파생된 ```ByteBuf```는 원래 버퍼의 참조수를 공유
+						> 아래 메소드로 파생된 ```ByteBuf```는 원래 버퍼의 참조수를 공유
+
 						```java
 						public abstract class ByteBuf implements ReferenceCounted, ... {
 						  public abstract ByteBuf duplicate();
@@ -232,7 +235,7 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 						# 채널 파이프라인의 활용
 						* 각각의 채널에는 ```ChannelPipeline```이 있고
 						* 한 ```ChannelPipeline```에는 ```ChannelHandler``` 여러개
-						* ```ChannelPipeline``` 조립에 따라 ```ChannelHandler```를 다양하게 활용 가능
+						* ```ChannelPipeline```에 여러 ```ChannelHandler```를 다양하게 조립해 사용
 						</script>
 					</section>
 					<section data-markdown class="small-code">
@@ -243,12 +246,12 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
 						### 핵심 메소드
 						```java
-						ChannelFuture   write(Object obj)
-						ChannelFuture   flush(Object obj)
-						ChannelFuture   writeAndFlush(Object obj)
-						ChannelFuture   closeFuture()
-						ChannelPipeline pipeline()
-						SocketAddress   remoteAddress()
+						ChannelFuture addListener(GenericFutureListener<...> listener)
+						Channel       channel()
+						boolean       isSuccess();
+						Throwable     cause();
+						ChannelFuture await()
+						ChannelFuture sync()
 						```
 
 						</script>
@@ -258,7 +261,8 @@ class EchoServerHandler extends ChannelInboundHandlerAdapter {
 						## ChannelHandler
 						* Netty의 핵심 요소!
 						* Netty의 I/O 이벤트를 처리하는 인터페이스
-						* ```ChannelInboundHandlerAdapter``` / ```ChannelOutboundHandlerAdapter```
+						* ```ChannelInboundHandlerAdapter```
+						* ```ChannelOutboundHandlerAdapter```
 
 						### "전체" 메소드
 						```java
