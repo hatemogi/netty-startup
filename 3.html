@@ -72,7 +72,22 @@
 						<script type="text/template">
 						## 멀티쓰레드 처리가 어려운 이유
 						* 동기화를 놓치면 -> 경쟁조건 발생
-						* 동기화가 과도하면 -> 성능병목, 데드락 발생
+						* 동기화가 과도하면 -> 성능병목, 교착상태 발생
+
+						## 교착상태(deadlock)의 4가지 필요조건
+						* 상호배제 <small>Mutual exclusion</small>
+						* 점유대기 <small>Hold and wait</small>
+						* 비선점 <small>No preemption</small>
+						* 순환대기 <small>Circular wait</small>
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## 멀티쓰레드 프로그래밍
+
+						* 동시에 여러 일을 처리하기 쉬워보이지만,
+						* 제대로 작성하기 어렵습니다
+
 						</script>
 					</section>
 				</section>
@@ -113,7 +128,59 @@
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						# ChannelFuture &amp; Promise
+						# Future &amp; Promise
+						* 비동기 호출의 결과도 받을 수 있지만,
+						* 다른 쓰레드에 업무를 요청시에도 사용
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## Future 활용예
+
+						```java
+						Future<BigImage> img = loadBigImage();
+						renderHtmlText();
+						drawImage(img.get());
+						```
+
+						* 차례로 부르는 것처럼 이해하기 쉬움
+						* 이미지 로딩을 동시에 진행
+						* 필요한 시점에 로드가 끝나지 않았다면 알아서 대기
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## Promise
+						* Future에 결과를 통보하는 입장에서 사용
+
+						```java
+						public interface Promise<V> extends Future<V> {
+							Promise<V> setSuccess(V var1);
+							Promise<V> setFailure(Throwable var1);
+						}
+						```
+						</script>
+					</section>
+					<section data-markdown class="small-code">
+						<script type="text/template">
+						## Netty의 Promise 예제
+						```java
+						public void channelRead0(ChannelHandlerContext ctx, String line) {
+							Promise<String> p = ctx.executor().newPromise();
+
+							new Thread(() -> {
+								try {
+									Thread.sleep(5000);
+									p.setSuccess("hello from " + Thread.currentThread().getName());
+								} catch (InterruptedException e) { /* ignore */ }
+							}).start();
+
+							p.addListener(f ->
+								System.out.println("[" + Thread.currentThread().getName() +
+									"] listener got: " + f.get())
+							);
+						}
+						```
 						</script>
 					</section>
 				</section>
