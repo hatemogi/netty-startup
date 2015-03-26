@@ -4,6 +4,8 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
+import nettystartup.h2.http.HttpNotFoundHandler;
+import nettystartup.h2.http.HttpStaticFileHandler;
 
 import java.io.IOException;
 
@@ -35,6 +37,8 @@ class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 // replace the handler when done handshaking
                 ChannelPipeline p = f.channel().pipeline();
                 p.replace(WebSocketHandshakeHandler.class, "wsHandler", wsHandler);
+                p.remove(HttpStaticFileHandler.class);
+                p.remove(HttpNotFoundHandler.class);
             });
         }
     }
