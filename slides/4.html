@@ -70,6 +70,7 @@
 						* 압축 처리
 						* 다양한 프로토콜 지원
 						* 코덱 개발시 이용하는 클래스들
+						* <i class="fa fa-bolt"></i> 코덱도 채널핸들러입니다
 						</script>
 					</section>
 					<section class="small-code">
@@ -182,6 +183,31 @@ public class WebChatServer {
 }
 						</code></pre>
 					</section>
+
+					<section class="small-code">
+						<h2>
+							WebSocketHandshakeHandler.java
+						</h2>
+						<pre><code class="java" data-trim contenteditable>
+class WebSocketHandshakeHandler extends S..C..I.Handler&lt;FullHttpRequest&gt; {
+    protected void channelRead0(C..H..Context ctx, FullHttpRequest req) throws Exception {
+        ...  handshakeWebSocket(ctx, req); ...
+    }
+
+    private void handshakeWebSocket(C..H..Context ctx, FullHttpRequest req) {
+    	  ...
+        h.handshake(ctx.channel(), req).addListener((ChannelFuture f) -&gt; {
+            // replace the handler when done handshaking
+            ChannelPipeline p = f.channel().pipeline();
+            p.replace(WebSocketHandshakeHandler.class, "wsHandler", wsHandler);
+            p.remove(HttpStaticFileHandler.class);
+            p.remove(HttpNotFoundHandler.class);
+        }
+    }
+}
+						</code></pre>
+					</section>
+
 					<section class="small-code">
 						<h2>
 							<small>src/nettystartup/h4/</small>WebChatHandler.java
@@ -190,9 +216,7 @@ public class WebChatServer {
 class WebChatHandler extends SimpleChannelInboundHandler&lt;WebSocketFrame&gt; {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        ChatServerHandler chatHandler = new ChatServerHandler();
         // TODO: [실습4-2] 파이프라인에 코덱과 핸들러를 추가해서 WebSocket과 ChatServerHandler를 연결합니다.
-        chatHandler.helo(ctx.channel());
     }
 
     @Override
