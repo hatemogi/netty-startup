@@ -200,8 +200,6 @@ class WebSocketHandshakeHandler extends S..C..I.Handler&lt;FullHttpRequest&gt; {
             // replace the handler when done handshaking
             ChannelPipeline p = f.channel().pipeline();
             p.replace(WebSocketHandshakeHandler.class, "wsHandler", wsHandler);
-            p.remove(HttpStaticFileHandler.class);
-            p.remove(HttpNotFoundHandler.class);
         }
     }
 }
