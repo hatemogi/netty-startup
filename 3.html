@@ -161,26 +161,25 @@
 						```
 						</script>
 					</section>
-					<section data-markdown class="small-code">
-						<script type="text/template">
-						## Netty의 Promise 예제
-						```java
-						public void channelRead0(ChannelHandlerContext ctx, String line) {
-							Promise<String> p = ctx.executor().newPromise();
+					<section class="small-code">
+						<h2>Netty의 Promise</h2>
+						<pre><code class="java" contenteditable>
+public void channelRead0(ChannelHandlerContext ctx, String line) {
+    Promise&lt;String&gt; p = ctx.executor().newPromise();
 
-							new Thread(() -> {
-								try {
-									Thread.sleep(5000);
-									p.setSuccess("hello from " + Thread.currentThread().getName());
-								} catch (InterruptedException e) { /* ignore */ }
-							}).start();
+    new Thread(() -&gt; {
+        try {
+            Thread.sleep(5000);
+            p.setSuccess("hello from " + Thread.currentThread().getName());
+        } catch (InterruptedException e) { /* ignore */ }
+    }).start();
 
-							p.addListener(f ->
-								System.out.println("[" + Thread.currentThread().getName() +
-									"] listener got: " + f.get())
-							);
-						}
-						```
+    p.addListener(f -&gt;
+        System.out.println("[" + Thread.currentThread().getName() +
+            "] listener got: " + f.get())
+    );
+}
+						</pre></code>
 						</script>
 					</section>
 				</section>
@@ -473,6 +472,7 @@ class ChatMessageCodec extends MessageToMessageCodec&lt;String, ChatMessage&gt; 
 					<script type="text/template">
 					## 참고자료
 					* [New and Noteworthy in Netty 4.0](http://netty.io/wiki/new-and-noteworthy-in-4.0.html)
+					* http://en.wikipedia.org/wiki/Futures_and_promises
 					</script>
 				</section>
 
