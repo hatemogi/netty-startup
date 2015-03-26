@@ -300,19 +300,35 @@
 					</section>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-					## True or False <i class="fa fa-question-circle"></i>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						## True or False <i class="fa fa-question-circle"></i>
 
-					* 비동기와 Event-driven은 같은 뜻이다?
-					* Event-Driven은 클라이언트에 적합하다?
-					* 비동기식 싱글쓰레드에서는 Blocking Call을 할 수 없다?
-					</script>
+						* 비동기와 Event-driven은 같은 뜻이다?
+						* Event-Driven은 데스크탑앱 클라이언트에만 적합하다?
+						* 비동기식 싱글쓰레드에서는 Blocking Call을 할 수 없다?
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						## <i class="fa fa-question-circle"></i> 업무요청시
+
+						* 업무 요청하고 옆에서 기다리고 있으면?
+						* 업무 요청하고 돌아갔다가, 나중에 다시 와서 확인하면?
+						* 업무 요청하면서, "다되면 저한테 알려주세요"하면?
+						</script>
+
+					</section>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-					## Java의 NIO를 그냥 쓰면 안되나요 <i class="fa fa-question-circle"></i>
+					## Netty는 Async Event-Driven
+
+					> 어? 그럼 그냥 Java의 NIO를 쓰면 안되나요 <i class="fa fa-question-circle"></i>
+
 					* 됩니다만...
 					</script>
 				</section>
@@ -385,7 +401,7 @@
 						## ChannelHandlerContext
 						* ```ChannelHandler```는 ```ChannelHandlerContext```를 통해
 						 * 다음 ```ChannelHandler```에게 이벤트를 넘기거나,
-						 * 동적으로 ```ChannelPipeline```을 변경할 수 있음
+						 * 동적으로 ```ChannelPipeline```을 변경할 수 있음 - [실습4]
 
 						### 핵심 메소드
 						```java
