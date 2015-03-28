@@ -23,23 +23,28 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpR
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
         // TODO: [실습2-1] sendStaticFile메소드를 써서 구현합니다. "/" 요청이 아닌 경우에는 어떻게 할까요?
+        // release()를 고려해서 필요시 retain()을 부르도록 합니다.
     }
 
     private void sendStaticFile(ChannelHandlerContext ctx, FullHttpRequest req) throws IOException {
-        RandomAccessFile raf = new RandomAccessFile(filename, "r");
-        long fileLength = raf.length();
+        try {
+            RandomAccessFile raf = new RandomAccessFile(filename, "r");
+            long fileLength = raf.length();
 
-        HttpResponse res = new DefaultHttpResponse(HTTP_1_1, OK);
-        HttpHeaders.setContentLength(res, fileLength);
-        res.headers().set(CONTENT_TYPE, "text/html; charset=utf-8");
-        if (HttpHeaders.isKeepAlive(req)) {
-            res.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-        }
-        ctx.write(res); // 응답 헤더 전송
-        ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength));
-        ChannelFuture f = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-        if (!HttpHeaders.isKeepAlive(req)) {
-            f.addListener(ChannelFutureListener.CLOSE);
+            HttpResponse res = new DefaultHttpResponse(HTTP_1_1, OK);
+            HttpHeaders.setContentLength(res, fileLength);
+            res.headers().set(CONTENT_TYPE, "text/html; charset=utf-8");
+            if (HttpHeaders.isKeepAlive(req)) {
+                res.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+            }
+            ctx.write(res); // 응답 헤더 전송
+            ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength));
+            ChannelFuture f = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            if (!HttpHeaders.isKeepAlive(req)) {
+                f.addListener(ChannelFutureListener.CLOSE);
+            }
+        } finally {
+            req.release();
         }
     }
 
