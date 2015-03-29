@@ -55,6 +55,8 @@
 
 					> ### http://hatemogi.github.io/netty-startup
 
+					위 주소에서 직접 볼 수 있고, [SPC]를 누르면 다음 슬라이드로, [Shift-SPC]를 누르면 이전 슬라이드로 이동합니다.
+
 					</script>
 				</section>
 
@@ -132,11 +134,12 @@
 
 					<section>
 						<h2>매 시간 구조</h2>
-						<img src="img/pair.jpg" style="float: right; width: 60%;"/>
+						<img src="img/pair.jpg" style="float: right; width: 50%;"/>
 						<p data-markdown>
-						1. 설명
-						1. 예제 설명 / 데모
-						1. 실습 (pair-)
+						1. 설명 (20분)
+						1. 예제 설명 / 데모 (10분)
+						1. pair 실습 (25분)
+						 * 총 9개 문제 풀이
 						</p>
 					</section>
 					<section data-background="img/excercise.png"></section>
@@ -459,6 +462,8 @@
 					git clone https://github.com/hatemogi/netty-startup
 					```
 
+					> 처음에는 실패하는 유닛테스트가 준비돼 있고, 실습문제를 모두 풀면 유닛 테스트가 모두 통과돼야합니다.
+
 					#### Netty 4.x JavaDoc
 
 					* http://netty.io/4.0/api/index.html
@@ -512,7 +517,7 @@ class DiscardServerHandler extends ChannelInboundHandlerAdapter {
         try {
             // discard
         } finally {
-            buf.release();
+            buf.release(); // 이 부분은 두번째 시간에 설명합니다.
         }
     }
     @Override
@@ -639,7 +644,7 @@ public final class EchoServer {
 class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        // TODO: [실습1-2] 받은대로 응답하는 코드를 작성합니다
+        // TODO: [실습1-2] 받은대로 응답하는 코드를 한 줄 작성합니다. release는 필요하지 않습니다.
     }
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {

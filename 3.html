@@ -105,7 +105,7 @@
 					<section data-markdown>
 						<script type="text/template">
 						## 쓰레드 모델을 풀어서 설명하면
-						* 각 채널은 싱글쓰레드로 운영
+						* 각 채널은 (사실상) 싱글쓰레드로 운영
 						* 쓰레드 안전성(thread-safety)를 신경쓰지 않아도 됨
 
 						### <i class="fa fa-bomb"></i> 주의
@@ -197,7 +197,7 @@ public void channelRead0(ChannelHandlerContext ctx, String line) {
 					</section>
 					<section data-markdown>
 						<script type="text/template">
-						## 채팅 프로토콜 <small>project/doc/protocol.md</small>
+						## 채팅 프로토콜 <small>doc/protocol.md</small>
 
 						* ```메시지```: UTF-8 텍스트, "\n" ;
 						* ```메시지``` = ```명령어절``` | ```명령어절```, " ", ```텍스트``` ;
