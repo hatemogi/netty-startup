@@ -2,13 +2,24 @@ package nettystartup.h4;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.*;
-import nettystartup.h3.ChatServerHandler;
 
 class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         // TODO: [실습4-2] 파이프라인에 코덱과 핸들러를 추가해서 WebSocket과 ChatServerHandler를 연결합니다.
         // 채널 파이프라인의 어느 위치에 넣을지 고민해봅시다.
+    }
+
+    // 채널 파이프라인에서 현재핸들러가 등록된 이름을 구합니다.
+    // 이 이름을 기준으로 앞뒤에 다른 핸들러를 추가할 수 있습니다.
+    private String handlerName(ChannelHandlerContext ctx) {
+        final String[] result = new String[1];
+        ctx.pipeline().toMap().forEach((name, handler) -> {
+            if (handler.getClass().equals(this.getClass())) {
+                result[0] = name;
+            }
+        });
+        return result[0];
     }
 
     @Override
