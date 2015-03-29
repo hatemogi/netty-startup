@@ -90,6 +90,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
         }
     }
 
+    // ChatMessage 객체를 만드는 유틸리티 메소드 입니다.
     private ChatMessage M(String... args) {
         switch (args.length) {
             case 1:
@@ -105,14 +106,17 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
         }
     }
 
+    // 채널에 대화명을 지정합니다.
     private void bindNickname(Channel c, String nickname) {
         c.attr(nickAttr).set(nickname);
     }
 
+    // 채널에 지정된 대화명을 가져옵니다.
     private String nickname(Channel c) {
         return c.attr(nickAttr).get();
     }
 
+    // nickname(Channel)과 같지만 편의를 위한 메소드입니다.
     private String nickname(ChannelHandlerContext ctx) {
         return nickname(ctx.channel());
     }

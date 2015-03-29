@@ -12,7 +12,7 @@ class DiscardServerHandler extends ChannelInboundHandlerAdapter {
         try {
             // discard
         } finally {
-            buf.release();
+            buf.release(); // 이 부분은 두번째 시간에 설명합니다.
         }
     }
 

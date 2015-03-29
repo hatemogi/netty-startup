@@ -8,6 +8,7 @@ class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         // TODO: [실습4-2] 파이프라인에 코덱과 핸들러를 추가해서 WebSocket과 ChatServerHandler를 연결합니다.
+        // 채널 파이프라인의 어느 위치에 넣을지 고민해봅시다.
     }
 
     @Override
@@ -25,6 +26,10 @@ class WebChatHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
             throw new UnsupportedOperationException(String.format("%s frame types not supported", frame.getClass()
                     .getName()));
         }
+
+        // 이 WebChatHandler는 TextWebSocketFrame만 다음 핸들러에게 위임합니다.
+        // SimpleInboundChannelHandler<I>는 기본으로 release() 처리가 들어있기 때문에
+        // 아래의 코드는 retain()호출이 필요합니다.
         ctx.fireChannelRead(frame.retain());
     }
 }

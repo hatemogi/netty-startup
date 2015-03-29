@@ -16,6 +16,7 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpR
     private String filename;
 
     public HttpStaticFileHandler(String path, String filename) {
+        super(false); // set auto-release to false
         this.path = path;
         this.filename = filename;
     }
@@ -23,7 +24,8 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpR
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
         // TODO: [실습2-1] sendStaticFile메소드를 써서 구현합니다. "/" 요청이 아닌 경우에는 어떻게 할까요?
-        // release()를 고려해서 필요시 retain()을 부르도록 합니다.
+        // 이 Handler는 SimpleChannelInboundHandler<I>를 확장했지만 "auto-release: false"임에 주의합니다.
+        // 상황에 따라 "필요시"에는 retain()을 부르도록 합니다.
     }
 
     private void sendStaticFile(ChannelHandlerContext ctx, FullHttpRequest req) throws IOException {

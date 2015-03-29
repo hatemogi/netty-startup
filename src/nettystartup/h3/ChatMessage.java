@@ -1,5 +1,6 @@
 package nettystartup.h3;
 
+// ChatMessage는 ReferenceCounted가 아닙니다 -> retain()/release() 불필요
 public class ChatMessage {
     public final String command;
     public final String nickname;

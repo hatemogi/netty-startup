@@ -150,6 +150,8 @@ public void main() {
   System.out.println(buf.refCnt());
 }
 ```
+
+						> 누가 ```main()```의 마지막으로 ```release()```했고, 최종 ```refCnt()```는 얼마?
 						</script>
 					</section>
 
@@ -456,6 +458,7 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler&lt;HttpRe
     private String filename;
 
     public HttpStaticFileHandler(String path, String filename) {
+        super(false); // set auto-release to false
         this.path = path;
         this.filename = filename;
     }
