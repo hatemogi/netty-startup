@@ -55,6 +55,8 @@ git clone https://github.com/hatemogi/netty-startup
 
 > netty-startup
 
+* 클론받은 디렉토리를 인텔리J로 열고 [CMD+1]을 누르면 프로젝트 윈도가 보입니다.
+* [CMD+6]를 누르면 실습 문제용 코드를 작성할 부분들이 보입니다.
 * SDK가 JDK1.8로 잘 설정되었는지 확인합니다.
 * master 브랜치를 받은 상태에서는 유닛테스트 여러개가 실패하며, 실습문제를 다 풀면 모두 통과하게끔 준비돼 있습니다.
 
