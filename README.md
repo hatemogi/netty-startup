@@ -60,6 +60,10 @@ git clone https://github.com/hatemogi/netty-startup
 * SDK가 JDK1.8로 잘 설정되었는지 확인합니다.
 * master 브랜치를 받은 상태에서는 유닛테스트 여러개가 실패하며, 실습문제를 다 풀면 모두 통과하게끔 준비돼 있습니다.
 
+### 강습후기
+
+* [Netty 기초 강습후기@Medium](https://medium.com/happyprogrammer-in-jeju/netty-기초-강습-후기-8ba4fdee2518)
+
 ## 라이선스
 
 이 프로젝트의 슬라이드와 실습용 소스코드는 MIT라이선스를 따릅니다.
