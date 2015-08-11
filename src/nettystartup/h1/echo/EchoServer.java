@@ -16,7 +16,7 @@ public final class EchoServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class);
             // TODO: [실습1-1] DiscardServer를 참고해서 이 부분을 채워 EchoServerHandler를 등록합니다
-            b.childHandler(new EchoServerHandler());
+
             ChannelFuture f = b.bind(8011).sync();
             f.channel().closeFuture().sync();
         } finally {
