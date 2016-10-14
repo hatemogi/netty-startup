@@ -21,7 +21,7 @@ class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
-        if (wsPath.equals(req.getUri())) {
+        if (wsPath.equals(req.uri())) {
             // wsPath로 온 요청은 WebSocket 업그레이드 시도
             handshakeWebSocket(ctx, req);
         } else {

@@ -6,11 +6,6 @@ import io.netty.handler.codec.http.*;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private String path;
     private String filename;
@@ -38,16 +33,16 @@ public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpR
             RandomAccessFile raf = new RandomAccessFile(filename, "r");
             long fileLength = raf.length();
 
-            HttpResponse res = new DefaultHttpResponse(HTTP_1_1, OK);
-            HttpHeaders.setContentLength(res, fileLength);
-            res.headers().set(CONTENT_TYPE, "text/html; charset=utf-8");
-            if (HttpHeaders.isKeepAlive(req)) {
-                res.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+            HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+            HttpUtil.setContentLength(res, fileLength);
+            res.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
+            if (HttpUtil.isKeepAlive(req)) {
+                res.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
             }
             ctx.write(res); // 응답 헤더 전송
             ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength));
             ChannelFuture f = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-            if (!HttpHeaders.isKeepAlive(req)) {
+            if (!HttpUtil.isKeepAlive(req)) {
                 f.addListener(ChannelFutureListener.CLOSE);
             }
         } finally {
