@@ -39,127 +39,144 @@
     }
   </style>
 </head>
-<body ng-app="chatApp" ng-controller="ChatCtrl">
-  <header>
-    <h2>
-      웹소켓 채팅
-      <i class="fa fa-chain-broken" ng-hide="connected"></i>
-      <i class="fa fa-chain" ng-show="connected"></i>
-    </h2>
-  </header>
-  <main class="pure-g">
-    <section class="pure-u-3-4">
-      <div id="messages" class="pure-u-1">
-        <div ng-repeat="msg in messages" ng-class="msg.type">
-          <cite>{{ msg.nick }}</cite>
-          {{ msg.text }}
+<body>
+  <div id="app">
+    <header>
+      <h2>
+        웹소켓 채팅
+        <i class="fa fa-chain" v-if="connected"></i>
+        <i class="fa fa-chain-broken" v-else></i>
+      </h2>
+    </header>
+    <main class="pure-g">
+      <section class="pure-u-3-4">
+        <div id="messages" class="pure-u-1">
+          <div v-for="msg in messages" v-bind:class="msg.type">
+            <cite>{{ msg.nick }}</cite>
+            {{ msg.text }}
+          </div>
+          <div style="height: 30px;" buffer-for-scroll></div>
         </div>
-        <div style="height: 30px;" buffer-for-scroll></div>
-      </div>
-      <form class="pure-form pure-g">
-        <div class="pure-u-1-5">
-          <input class="pure-input-1" type="text" placeholder="대화명" ng-model="nickname" ng-blur="change_nick()">
+        <form class="pure-form pure-g" onsubmit="return false;">
+          <div class="pure-u-1-5">
+            <input class="pure-input-1" type="text" placeholder="대화명" v-model="nickname" @blur="change_nick">
+          </div>
+          <div class="pure-u-3-5">
+            <input class="pure-input-1" type="text" name="text" placeholder="메시지" autofocus v-model="text" @keydown="keydown">
+          </div>
+          <div class="pure-u-1-5">
+            <button class="pure-u-1 pure-button pure-button-primary" style="height: 36px;" @click="send">
+              <i class="fa fa-comment"> 보내기</i>
+            </button>
+          </div>
+        </form>
+      </section>
+      <aside class="pure-u-1-4">
+        <div v-for="nick in attendees">
+          {{ nick }}
+          <i v-if="nick == prevnick" class="fa fa-user"></i>
         </div>
-        <div class="pure-u-3-5">
-          <input class="pure-input-1" type="text" name="text" placeholder="메시지" autofocus ng-model="text" ng-keydown="keydown($event)">
-        </div>
-        <div class="pure-u-1-5">
-          <button type="submit" class="pure-u-1 pure-button pure-button-primary" style="height: 36px;" ng-click="send()">
-            <i class="fa fa-comment"> 보내기</i>
-          </button>
-        </div>
-      </form>
-    </section>
-    <aside class="pure-u-1-4">
-        <div ng-repeat="nick in attendees">
-          {{nick}}
-          <i ng-show="nick == prevnick" class="fa fa-user"></i>
-        </div>
-    </aside>
-  </main>
+      </aside>
+    </main>
+  </div>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
   <script type="text/javascript">
-    var app = angular.module("chatApp", []);
-    app.controller("ChatCtrl", function($scope, $window) {
-      var h = $scope.history = [];
-      h.push = function(text) {
-        Array.prototype.push.call(this, text);
-        this.historyIdx = this.length - 1;
-      };
-      h.prev = function() {
-        if (this.length == 0) return "";
-        this.historyIdx = (this.historyIdx + this.length) % this.length;
-        return this[this.historyIdx--];
-      };
-      $scope.messages = [];
-      $scope.attendees = [];
-      var ws = $window.ws = new WebSocket("ws://" + $window.location.host + "/chat");
-      var message = function(m) {
-        $scope.messages.push(m);
-        $scope.$apply();
-        var area = document.getElementById("messages");
-        area.scrollTop = area.scrollHeight;
-      };
-      ws.onmessage = function(event) {
-        var line = event.data;
-        var m1 = line.split(" ");
-        var m2 = m1.shift().split(":", 2);
-        var command = m2[0];
-        var nickname = m2[1];
-        var text = m1.join(" ");
-        console.log([line, command, nickname, text]);
-        var a = $scope.attendees;
-        if (command == "FROM") {
-          message({nick: nickname, text: text});
-        } else if (command == "HAVE" || command == "JOIN" || command == "HELO") {
-          a.push(nickname);
-          if (command == "HELO") {
-            message({type: "info", text: "환영합니다, " + nickname + "님!"});
-            $scope.prevnick = $scope.nickname = nickname;
-          } else if (command == "JOIN") {
-            message({type: "info", text: nickname + "님이 들어오셨습니다."});
+    var app = new Vue({
+      el: '#app',
+      data: {
+        connected: false,
+        nickname: "",
+        prevnick: null,
+        text: "",
+        history: [],
+        messages: [],
+        attendees: [],
+        ws: null
+      },
+      created: function() {
+        this.history.push = function(text) {
+          Array.prototype.push.call(this, text);
+          this.historyIdx = this.length - 1;
+        };
+        this.history.prev = function() {
+          if (this.length == 0) return "";
+          this.historyIdx = (this.historyIdx + this.length) % this.length;
+          return this[this.historyIdx--];
+        };
+      },
+      mounted: function() {
+        this.ws = window.ws = new WebSocket("ws://" + window.location.host + "/chat");
+        var $scope = this;
+        var message = function(m) {
+          $scope.messages.push(m);
+          var area = document.getElementById("messages");
+          area.scrollTop = area.scrollHeight;
+        };
+
+        this.ws.onmessage = function(event) {
+          var line = event.data;
+          var m1 = line.split(" ");
+          var m2 = m1.shift().split(":", 2);
+          var command = m2[0];
+          var nickname = m2[1];
+          var text = m1.join(" ");
+          console.log([line, command, nickname, text]);
+          var a = $scope.attendees;
+          if (command == "FROM") {
+            message({nick: nickname, text: text});
+          } else if (command == "HAVE" || command == "JOIN" || command == "HELO") {
+            a.push(nickname);
+            if (command == "HELO") {
+              message({type: "info", text: "환영합니다, " + nickname + "님!"});
+              $scope.prevnick = $scope.nickname = nickname;
+            } else if (command == "JOIN") {
+              message({type: "info", text: nickname + "님이 들어오셨습니다."});
+            }
+          } else if (command == "LEFT") {
+            a.splice(a.indexOf(nickname), 1);
+            message({type: "info", text: nickname + "님이 나가셨습니다."});
+          } else if (command == "NICK") {
+            if (nickname == $scope.prevnick) {
+              message({type: "info", text: "대화명이 바뀌었습니다: " + text});
+              $scope.prevnick = $scope.nickname = text;
+            } else {
+              message({type: "info", text: nickname + "님이 대화명을 바꾸셨습니다: " + text});
+            }
+            a.splice(a.indexOf(nickname), 1);
+            a.push(text);
           }
-        } else if (command == "LEFT") {
-          a.splice(a.indexOf(nickname), 1);
-          message({type: "info", text: nickname + "님이 나가셨습니다."});
-        } else if (command == "NICK") {
-          if (nickname == $scope.prevnick) {
-            message({type: "info", text: "대화명이 바뀌었습니다: " + text});
-            $scope.prevnick = $scope.nickname = text;
+        };
+        this.ws.onopen = function() {
+          console.log("ws open"); $scope.connected = true;
+          $scope.ws.onclose = function() {
+            console.log("ws close"); $scope.connected = false;
+            message({type: "info", text: "연결이 끊겼습니다."});
+          };
+        };
+      },
+      methods: {
+        send: function() {
+          if (this.text && this.text.length > 0) {
+            this.ws.send("SEND " + this.text);
+            this.history.push(this.text);
+            this.text = "";
+          }
+        },
+        keydown: function($event) {
+          if ($event.keyCode == 38) { // 커서 위방향
+            this.text = this.history.prev()
           } else {
-            message({type: "info", text: nickname + "님이 대화명을 바꾸셨습니다: " + text});
+            return false;
           }
-          a.splice(a.indexOf(nickname), 1);
-          a.push(text);
-        }
-        $scope.$apply();
-      };
-      ws.onopen = function() { console.log("ws open"); $scope.connected = true;};
-      ws.onclose = function() {
-        console.log("ws close"); $scope.connected = false;
-        message({type: "info", text: "연결이 끊겼습니다."});
-      };
-      $scope.send = function() {
-        if ($scope.text && $scope.text.length > 0) {
-          ws.send("SEND " + $scope.text);
-          $scope.history.push($scope.text);
-          $scope.text = "";
+        },
+        change_nick: function() {
+          if (this.nickname == "") this.nickname = this.prevnick;
+          if (this.prevnick != this.nickname) {
+            ws.send("NICK " + this.nickname);
+          }
         }
       }
-      $scope.keydown = function($event) {
-        if ($event.keyCode == 38) { // 커서 위방향
-          $scope.text = $scope.history.prev()
-        } else {
-          return false;
-        }
-      };
-      $scope.change_nick = function() {
-        if ($scope.nickname == "") $scope.nickname = $scope.prevnick;
-        if ($scope.prevnick != $scope.nickname) {
-          ws.send("NICK " + $scope.nickname);
-        }
-      };
     });
   </script>
 </body>
