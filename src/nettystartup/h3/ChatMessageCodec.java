@@ -8,7 +8,7 @@ import java.util.List;
 class ChatMessageCodec extends MessageToMessageCodec<String, ChatMessage> {
     @Override
     protected void encode(ChannelHandlerContext ctx, ChatMessage msg, List<Object> out) throws Exception {
-        out.add(msg.toString() + "\n");
+        out.add(msg + "\n");
     }
 
     @Override

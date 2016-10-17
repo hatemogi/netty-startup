@@ -20,25 +20,25 @@ public class NicknameProvider {
         );
         preset = new HashSet<>(names);
         Collections.shuffle(names);
-        pool = new ConcurrentLinkedQueue<>(names);
+        pool = new LinkedList<>(names);
     }
 
-    public boolean available(String nickname) {
+    public synchronized boolean available(String nickname) {
         return !preset.contains(nickname) && !occupied.contains(nickname);
     }
 
-    public String reserve() {
+    public synchronized String reserve() {
         String n = pool.poll();
         if (n != null) occupied.add(n);
         return n;
     }
 
-    public void reserve(String custom) {
+    public synchronized void reserve(String custom) {
         if (!available(custom)) throw new RuntimeException("not available name");
         occupied.add(custom);
     }
 
-    public NicknameProvider release(String nick) {
+    public synchronized NicknameProvider release(String nick) {
         occupied.remove(nick);
         if (preset.contains(nick) && !pool.contains(nick)) pool.add(nick);
         return this;
