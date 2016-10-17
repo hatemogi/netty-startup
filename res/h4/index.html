@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Netty StartUp - WebChat</title>
-  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
   <style>
     body {
       margin: 10px auto;
-      max-width: 800px;
+      max-width: 900px;
     }
     #messages {
       width: 100%;
@@ -40,7 +41,7 @@
   </style>
 </head>
 <body>
-  <div id="app">
+  <div id="app" class="container-fluid">
     <header>
       <h2>
         웹소켓 채팅
@@ -48,30 +49,30 @@
         <i class="fa fa-chain-broken" v-else></i>
       </h2>
     </header>
-    <main class="pure-g">
-      <section class="pure-u-3-4">
-        <div id="messages" class="pure-u-1">
+    <main class="row">
+      <section class="col-md-8">
+        <div id="messages">
           <div v-for="msg in messages" v-bind:class="msg.type">
             <cite>{{ msg.nick }}</cite>
             {{ msg.text }}
           </div>
           <div style="height: 30px;" buffer-for-scroll></div>
         </div>
-        <form class="pure-form pure-g" onsubmit="return false;">
-          <div class="pure-u-1-5">
-            <input class="pure-input-1" type="text" placeholder="대화명" v-model="nickname" @blur="change_nick">
+        <form class="form-inline" onsubmit="return false;">
+          <div class="form-group">
+            <input class="form-control" type="text" placeholder="대화명" v-model="nickname" @blur="change_nick">
           </div>
-          <div class="pure-u-3-5">
-            <input class="pure-input-1" type="text" name="text" placeholder="메시지" autofocus v-model="text" @keydown="keydown">
+          <div class="form-group">
+            <input class="form-control" style="width: 300px;" type="text" name="text" placeholder="메시지" autofocus v-model="text" @keydown="keydown">
           </div>
-          <div class="pure-u-1-5">
-            <button class="pure-u-1 pure-button pure-button-primary" style="height: 36px;" @click="send">
+          <div class="form-group">
+            <button class="btn btn-primary" style="height: 36px;" @click="send">
               <i class="fa fa-comment"> 보내기</i>
             </button>
           </div>
         </form>
       </section>
-      <aside class="pure-u-1-4">
+      <aside class="col-md-4">
         <div v-for="nick in attendees">
           {{ nick }}
           <i v-if="nick == prevnick" class="fa fa-user"></i>
