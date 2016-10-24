@@ -59,6 +59,8 @@
 						</small>
 					</h2>
 					<p data-markdown>
+					#### 프리랜서 서버 개발자
+					* 2016, Akka 기반 서버 개발
 					* 2015, Netty 기반 서버 개발
 					* 2013, 사내 Redis SaaS 개발팀장, 160+ VM
 					* 2010, 클라우드, 네트워크 파일동기화 프로토콜 설계
@@ -108,7 +110,7 @@
 						<script type="text/template">
 						## 준비사항
 
-						* [IntelliJ 14.1 CE](https://www.jetbrains.com/idea/download/)
+						* [IntelliJ 2016.2.5 Community](https://www.jetbrains.com/idea/download/)
 						* [JDK8](https://jdk8.java.net/download.html)
 						* [Git 클라이언트](http://git-scm.com/downloads)
 						</script>
@@ -116,19 +118,25 @@
 
 					<section data-markdown>
 						<script type="text/template">
-						## 4시간 진행 주제
+						## 5시간 진행 주제
 
 						1. 비동기 개념, 기본 인터페이스(```Channel```) 정리
 						1. [고성능 메모리 모델과 유연한 파이프라인](2.html)
 						1. [깔끔한 쓰레드 모델, Future/Promise 활용](3.html)
 						1. [풍부한 코덱과 WebSocket](4.html)
+					</script>
+				</section>
 
-						#### 예제와 실습
+				<section data-markdown>
+					<script type="text/template">
+						## 예제와 실습
 
-						1. Discard 서버, Echo 서버
-						1. HTTP 서버
-						1. 채팅 서버
-						1. 웹소켓 채팅 서버
+						1. 첫 Netty 서버: Discard 서버, Echo 서버
+						1. HTTP 서버를 직접 만들어 보자
+						1. 텍스트 프로토콜 기반의 채팅 서버를 만들자
+						1. 웹소켓을 써서 채팅 서버를 웹환경으로!
+
+						> 매시간 직접 작성하셔야 하는 (간단한) 코드가 있습니다.
 						</script>
 					</section>
 
@@ -136,9 +144,9 @@
 						<h2>매 시간 구조</h2>
 						<img src="img/pair2.jpg" style="float: right; width: 50%;"/>
 						<p data-markdown>
-						1. 설명 (20분)
-						1. 예제 설명 / 데모 (10분)
-						1. pair 실습 (25분)
+						1. 설명 (~30분)
+						1. 예제 설명 / 데모 (~10분)
+						1. pair 실습 (~30분)
 						 * 총 9개 문제 풀이
 						</p>
 					</section>
@@ -194,12 +202,11 @@
 						<script type="text/template">
 						## Netty 버전
 
-						> 이 자료와 실습은 4.0.30.Final을 기준으로 합니다.
+						> 이 자료와 실습은 4.1.6.Final을 기준으로 합니다.
 
-						* 5.0.0.Alpha2 ‐ 04-Mar-2015 (Development)
-						* 4.1.0.Beta5 ‐ 07-May-2015 (Development)
-						* 4.0.30.Final ‐ 24-Jul-2015 (Stable, Recommended)
-						* 3.10.4.Final ‐ 30-Mar-2015 (Stable)
+						* 4.1.6.Final ‐ 14-Oct-2016 (Stable, Recommended)
+						* 4.0.42.Final ‐ 14-Oct-2016 (Stable)
+						* 3.10.6.Final ‐ 29-Jun-2016 (Stable)
 						</script>
 					</section>
 				</section>
@@ -464,9 +471,9 @@
 
 					> 처음에는 실패하는 유닛테스트가 준비돼 있고, 실습문제를 모두 풀면 유닛 테스트가 모두 통과돼야합니다.
 
-					#### Netty 4.x JavaDoc
+					#### Netty 4.1 JavaDoc
 
-					* http://netty.io/4.0/api/index.html
+					* http://netty.io/4.1/api/index.html
 
 				</section>
 				<section>
