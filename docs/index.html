@@ -600,7 +600,7 @@ public class DiscardServerHandlerTest {
         EmbeddedChannel ch = new EmbeddedChannel(new DiscardServerHandler());
         ByteBuf in = Unpooled.wrappedBuffer(m.getBytes());
         ch.writeInbound(in);
-        ByteBuf r = (ByteBuf) ch.readOutbound();
+        ByteBuf r = ch.readOutbound();
         assertThat(r, nullValue());
     }
 }
