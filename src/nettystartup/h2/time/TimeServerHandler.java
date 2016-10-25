@@ -12,12 +12,9 @@ class TimeServerHandler extends ChannelInboundHandlerAdapter {
         time.writeInt((int) (System.currentTimeMillis() / 1000L + 2208988800L));
 
         ChannelFuture f = ctx.writeAndFlush(time);
-        f.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) {
-                assert f == future;
-                ctx.close();
-            }
+        f.addListener(future -> {
+            assert f == future;
+            ctx.close();
         });
     }
 }

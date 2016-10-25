@@ -18,6 +18,7 @@ final class EchoServer {
             // TODO: [실습1-1] DiscardServer를 참고해서 이 부분을 채워 EchoServerHandler를 등록합니다
 
             ChannelFuture f = b.bind(8011).sync();
+            System.err.println("Ready for 0.0.0.0:8011");
             f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();

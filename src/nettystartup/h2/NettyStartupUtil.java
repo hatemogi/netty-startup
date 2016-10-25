@@ -3,6 +3,7 @@ package nettystartup.h2;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -29,7 +30,15 @@ public class NettyStartupUtil {
     }
 
     public static void runServer(int port, ChannelHandler childHandler) throws Exception {
-        runServer(port, childHandler, b -> {
+        runServer(port, childHandler, b -> {});
+    }
+
+    public static void runServer(int port, Consumer<ChannelPipeline> initializer) throws Exception {
+        runServer(port, new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) throws Exception {
+                initializer.accept(ch.pipeline());
+            }
         });
     }
 }
