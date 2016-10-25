@@ -10,7 +10,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 import nettystartup.h2.NettyStartupUtil;
 
-public final class ChatServer {
+final class ChatServer {
     public static void main(String[] args) throws Exception {
         NettyStartupUtil.runServer(8030, new ChannelInitializer<SocketChannel>() {
             @Override

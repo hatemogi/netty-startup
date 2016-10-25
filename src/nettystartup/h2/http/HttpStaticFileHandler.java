@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class HttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-    private String path;
-    private String filename;
+    private final String path;
+    private final String filename;
 
     public HttpStaticFileHandler(String path, String filename) {
         super(false); // set auto-release to false

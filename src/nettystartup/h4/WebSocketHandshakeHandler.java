@@ -11,7 +11,7 @@ import java.io.IOException;
 
 class WebSocketHandshakeHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private final String wsPath;
-    private ChannelHandler wsHandler;
+    private final ChannelHandler wsHandler;
 
     public WebSocketHandshakeHandler(String wsPath, ChannelHandler wsHandler) {
         super(false);

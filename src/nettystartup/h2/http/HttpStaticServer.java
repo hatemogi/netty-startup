@@ -7,8 +7,8 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import nettystartup.h2.NettyStartupUtil;
 
-public class HttpStaticServer {
-    static String index = System.getProperty("user.dir") + "/res/h2/index.html";
+class HttpStaticServer {
+    final static String index = System.getProperty("user.dir") + "/res/h2/index.html";
 
     public static void main(String[] args) throws Exception {
         NettyStartupUtil.runServer(8020, new ChannelInitializer<SocketChannel>() {

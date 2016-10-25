@@ -9,7 +9,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> {
     private static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     static final AttributeKey<String> nickAttr = AttributeKey.newInstance("nickname");
-    static final NicknameProvider nicknameProvider = new NicknameProvider();
+    private static final NicknameProvider nicknameProvider = new NicknameProvider();
 
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         // Tricky: 이미 channel이 active인 상황에서

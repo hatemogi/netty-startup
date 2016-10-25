@@ -7,7 +7,7 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import nettystartup.h2.NettyStartupUtil;
 
-public final class PromisingServer {
+final class PromisingServer {
     public static void main(String[] args) throws Exception {
         NettyStartupUtil.runServer(8031,  new ChannelInitializer<SocketChannel>() {
             @Override

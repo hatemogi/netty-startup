@@ -18,7 +18,7 @@ public class EchoServerHandlerTest {
         EmbeddedChannel ch = new EmbeddedChannel(new EchoServerHandler());
         ByteBuf in = Unpooled.copiedBuffer(m, CharsetUtil.UTF_8);
         ch.writeInbound(in);
-        ByteBuf r = (ByteBuf)ch.readOutbound();
+        ByteBuf r = ch.readOutbound();
         releaseLater(r);
         assertThat("응답이 없습니다", r, notNullValue());
         assertThat("참조수는 1이어야 합니다",r.refCnt(), is(1));

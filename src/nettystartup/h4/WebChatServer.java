@@ -9,8 +9,8 @@ import nettystartup.h2.NettyStartupUtil;
 import nettystartup.h2.http.HttpNotFoundHandler;
 import nettystartup.h2.http.HttpStaticFileHandler;
 
-public class WebChatServer {
-    static String index = System.getProperty("user.dir") + "/res/h4/index.html";
+class WebChatServer {
+    private static final String index = System.getProperty("user.dir") + "/res/h4/index.html";
 
     public static void main(String[] args) throws Exception {
         NettyStartupUtil.runServer(8040, new ChannelInitializer<SocketChannel>() {
