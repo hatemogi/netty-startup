@@ -42,7 +42,7 @@
 			<div class="slides">
 				<section class="cover">
 					<h1>Netty 시작하기 (3)</h1>
-					<h3>깔끔한 쓰레드 모델과 채널퓨처&amp;프로미스</h3>
+					<h3>깔끔한 스레드 모델과 채널퓨처&amp;프로미스</h3>
 					<p class="name">
 						<a href="http://hatemogi.com">김대현</a><br/>
 						<a href="http://twitter.com/hatemagi">@hatemogi</a>
@@ -52,7 +52,7 @@
 				<section data-markdown>
 					<script type="text/template">
 					## Netty 시작하기: 세번째 시간
-					* Netty의 쓰레드 모델
+					* Netty의 스레드 모델
 					* ChannelFuture와 ChannelPromise
 
 					### 실습과 예제
@@ -63,14 +63,14 @@
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						# 쓰레드가 무엇인가요?
+						# 스레드가 무엇인가요?
 
-						* 멀티 프로세스와 멀티 쓰레드의 차이?
+						* 멀티 프로세스와 멀티 스레드의 차이?
 						</script>
 					</section>
 					<section data-markdown>
 						<script type="text/template">
-						## 멀티쓰레드 처리가 어려운 이유
+						## 멀티스레드 처리가 어려운 이유
 						* 동기화를 놓치면 -> 경쟁조건 발생
 						* 동기화가 과도하면 -> 성능병목, 교착상태 발생
 
@@ -83,7 +83,7 @@
 					</section>
 					<section data-markdown>
 						<script type="text/template">
-						## 멀티쓰레드 프로그래밍
+						## 멀티스레드 프로그래밍
 
 						* 동시에 여러 일을 처리하기 쉬워보이지만,
 						* 제대로 작성하기 어렵습니다
@@ -95,33 +95,33 @@
 				<section>
 					<section data-markdown>
 						<script type="text/template">
-						# Netty의 깔끔한 쓰레드 모델
+						# Netty의 깔끔한 스레드 모델
 						* ChannelHandler의 메소드는 동시에 불리지 않는다
-						* 채널은 한 쓰레드에 할당되며, 그 쓰레드에서만 호출
-						* 등록된 ```ChannelFutureLister```도 그 쓰레드가 호출한다
+						* 채널은 한 스레드에 할당되며, 그 스레드에서만 호출
+						* 등록된 ```ChannelFutureLister```도 그 스레드가 호출한다
 
 						</script>
 					</section>
 					<section data-markdown>
 						<script type="text/template">
-						## 쓰레드 모델을 풀어서 설명하면
-						* 각 채널은 (사실상) 싱글쓰레드로 운영
-						* 쓰레드 안전성(thread-safety)를 신경쓰지 않아도 됨
+						## 스레드 모델을 풀어서 설명하면
+						* 각 채널은 (사실상) 싱글스레드로 운영
+						* 스레드 안전성(thread-safety)를 신경쓰지 않아도 됨
 
 						### <i class="fa fa-bomb"></i> 주의
-						* 채널핸들러 등록시에 별도 쓰레드를 지정할 수도 있는데,
-						* 이 경우 다른 핸들러는 다른 쓰레드가 호출할 수 있음
-						* 즉, 쓰레드 안전성을 고려해야함
+						* 채널핸들러 등록시에 별도 스레드를 지정할 수도 있는데,
+						* 이 경우 다른 핸들러는 다른 스레드가 호출할 수 있음
+						* 즉, 스레드 안전성을 고려해야함
 						</script>
 					</section>
 					<section data-markdown>
 						<script type="text/template">
-						## 채널과 쓰레드의 관계
+						## 채널과 스레드의 관계
 
 						* ```Channel```은 ```EventLoop```에 등록
-						* ```EventLoop```는 Channel에 하나의 쓰레드를 할당
-						* 해당 쓰레드 입장에서는 여러개의 ```Channel```을 처리
-						* 그러나 ```Channel```입장에서는 단일 쓰레드
+						* ```EventLoop```는 Channel에 하나의 스레드를 할당
+						* 해당 스레드 입장에서는 여러개의 ```Channel```을 처리
+						* 그러나 ```Channel```입장에서는 단일 스레드
 						</script>
 					</section>
 				</section>
@@ -130,7 +130,7 @@
 						<script type="text/template">
 						# Future &amp; Promise
 						* 비동기 호출의 결과도 받을 수 있지만,
-						* 다른 쓰레드에 업무를 요청시에도 사용
+						* 다른 스레드에 업무를 요청시에도 사용
 						</script>
 					</section>
 					<section data-markdown>

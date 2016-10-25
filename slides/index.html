@@ -78,6 +78,8 @@
 
 					위 주소에서 직접 볼 수 있고, [SPC]를 누르면 다음 슬라이드로, [Shift-SPC]를 누르면 이전 슬라이드로 이동합니다.
 
+					주의: 커서키로 이동하면 슬라이드를 건너뛰는 경우도 있습니다.
+
 					</script>
 				</section>
 
@@ -122,7 +124,7 @@
 
 						1. 비동기 개념, 기본 인터페이스(```Channel```) 정리
 						1. [고성능 메모리 모델과 유연한 파이프라인](2.html)
-						1. [깔끔한 쓰레드 모델, Future/Promise 활용](3.html)
+						1. [깔끔한 스레드 모델, Future/Promise 활용](3.html)
 						1. [풍부한 코덱과 WebSocket](4.html)
 					</script>
 				</section>
@@ -188,7 +190,7 @@
 					## Netty가 고성능인 이유
 
 					* Non-blocking Asynchronous 처리가 기본
-					* 적은 쓰레드로 많은 요청을 처리
+					* 적은 스레드로 많은 요청을 처리
 					* GC부하를 최소화하는 Zero-copy ByteBuf 지원
 					</section>
 					<section data-markdown>
@@ -196,7 +198,7 @@
 
 					* 각종 네트워크 프로토콜 (코덱) 기본 지원
 					* 필요한 부분을 쉽게 조립해 쓸 수 있는 구조
-					* 멀티쓰레딩 처리 없이도...
+					* 멀티스레딩 처리 없이도...
 					</section>
 					<section data-markdown>
 						<script type="text/template">
@@ -317,7 +319,7 @@
 
 						* 비동기와 Event-driven은 같은 뜻이다?
 						* Event-Driven은 데스크탑앱 클라이언트에만 적합하다?
-						* 비동기식 싱글쓰레드에서는 Blocking Call을 할 수 없다?
+						* 비동기식 싱글스레드에서는 Blocking Call을 할 수 없다?
 						</script>
 					</section>
 
