@@ -17,7 +17,7 @@ Netty는 JAVA환경에서 고성능 네트워크 서버를 개발할 수 있는 
 
 1. [비동기 개념, 기본 인터페이스(```Channel```) 정리](http://hatemogi.github.io/netty-startup/)
 1. [고성능 메모리 모델과 유연한 파이프라인](http://hatemogi.github.io/netty-startup/2.html)
-1. [깔끔한 쓰레드 모델, Future/Promise 활용](http://hatemogi.github.io/netty-startup/3.html)
+1. [깔끔한 스레드 모델, Future/Promise 활용](http://hatemogi.github.io/netty-startup/3.html)
 1. [풍부한 코덱과 WebSocket](http://hatemogi.github.io/netty-startup/4.html)
 
 위 슬라이드는 웹브라우저에서 바로 볼 수 있습니다.
@@ -38,11 +38,11 @@ IntelliJ에서 ```Cmd+6```을 눌러 ```TO DO``` 뷰를 열면 쉽게 찾아갈 
 
 ## 준비사항
 
-* [IntelliJ 14 CE](https://www.jetbrains.com/idea/download/)
+* [IntelliJ 최신버전 Community](https://www.jetbrains.com/idea/download/)
 * [JDK8](https://jdk8.java.net/download.html)
 * [Git 클라이언트](http://git-scm.com/downloads)
 
-무료 IDE인 IntelliJ CE버전으로 실습을 따라할 수 있습니다. Java8기준으로 실습 프로젝트를
+무료 IDE인 IntelliJ 커뮤니티 버전으로 실습을 따라할 수 있습니다. Java8기준으로 실습 프로젝트를
 작성했으므로, JDK1.8을 준비하도록 합니다.
 
 ### 프로젝트 클론
