@@ -16,7 +16,7 @@ public class HttpStaticFileHandlerTest {
         EmbeddedChannel ch = new EmbeddedChannel(new HttpStaticFileHandler("/", index));
         ch.writeInbound(new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/"));
         assertThat(ch.readOutbound(), instanceOf(HttpResponse.class));
-        FileRegion content = (FileRegion) ch.readOutbound();
+        FileRegion content = ch.readOutbound();
         assertTrue(content.count() > 0);
     }
 }
