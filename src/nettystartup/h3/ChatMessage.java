@@ -44,7 +44,7 @@ public class ChatMessage {
     }
 
     private boolean bothNullOrEqual(String s1, String s2) {
-        return s1 == s2 || s1.equals(s2);
+        return s1 == s2 || s1 != null && s1.equals(s2);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ChatMessage {
         if (o == null || !(o instanceof ChatMessage)) return false;
         ChatMessage oc = (ChatMessage)o;
         return this == o ||
-                command.equals(oc.command)
+                bothNullOrEqual(command, oc.command)
                 && bothNullOrEqual(nickname, oc.nickname)
                 && bothNullOrEqual(text, oc.text);
     }

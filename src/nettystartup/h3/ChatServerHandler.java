@@ -72,7 +72,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
             // TODO: [실습3-2] QUIT 명령어를 처리하고 BYE를 응답합니다. 연결도 끊습니다.
 
         } else if ("SEND".equals(msg.command)) {
-            // TODO: [실습3-3] 클라이언트로부터 대화 텍스트가 왔습니다. 모든 채널에 방송합니다.
+            // TODO: [실습3-3] 클라이언트로부터 대화 텍스트가 왔습니다. 모든 채널에 FROM 메시지를 방송합니다.
 
         } else if ("NICK".equals(msg.command)) {
             changeNickname(ctx, msg);

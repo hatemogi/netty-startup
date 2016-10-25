@@ -22,6 +22,5 @@ public class WebChatHandlerTest {
         Object[] klasses = StreamSupport.stream(p.spliterator(), false).limit(3).map(e -> e.getValue().getClass()).toArray();
         Object[] expected = new Object[]{WebChatHandler.class, WebSocketChatCodec.class, ChatServerHandler.class};
         assertThat("파이프라인 순서가 맞나요?", klasses, equalTo(expected));
-        System.out.println((String)ch.readOutbound());
     }
 }
