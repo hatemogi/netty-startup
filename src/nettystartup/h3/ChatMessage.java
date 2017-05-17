@@ -1,5 +1,7 @@
 package nettystartup.h3;
 
+import java.util.Objects;
+
 // ChatMessage는 ReferenceCounted가 아닙니다 -> retain()/release() 불필요
 public class ChatMessage {
     public final String command;
@@ -43,18 +45,14 @@ public class ChatMessage {
         return m;
     }
 
-    private boolean bothNullOrEqual(String s1, String s2) {
-        return s1 == s2 || s1 != null && s1.equals(s2);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ChatMessage)) return false;
         ChatMessage oc = (ChatMessage)o;
         return this == o ||
-                bothNullOrEqual(command, oc.command)
-                && bothNullOrEqual(nickname, oc.nickname)
-                && bothNullOrEqual(text, oc.text);
+                Objects.equals(command, oc.command)
+                && Objects.equals(nickname, oc.nickname)
+                && Objects.equals(text, oc.text);
     }
 
     @Override

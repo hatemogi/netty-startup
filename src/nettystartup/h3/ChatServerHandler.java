@@ -34,7 +34,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
         nicknameProvider.release(nickname(ctx));
     }
 
-    public void helo(Channel ch) {
+    private void helo(Channel ch) {
         if (nickname(ch) != null) return; // already done;
         String nick = nicknameProvider.reserve();
         if (nick == null) {

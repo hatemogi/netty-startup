@@ -1,6 +1,7 @@
 package nettystartup.h3.promise;
 
-import io.netty.channel.*;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Promise;
 
 class PromisingServerHandler extends SimpleChannelInboundHandler<String> {
@@ -17,9 +18,11 @@ class PromisingServerHandler extends SimpleChannelInboundHandler<String> {
                 p.setSuccess("hello from " + Thread.currentThread().getName());
             } catch (InterruptedException e) { /* ignore */ }
         }).start();
-        p.addListener(f ->
-            System.out.println("[" + Thread.currentThread().getName() + "] listener got: " + f.get())
-        );
+        p.addListener(f -> {
+            String s = "[" + Thread.currentThread().getName() + "] listener got: " + f.get();
+            System.out.println(s);
+            ctx.writeAndFlush("> " + s + "\n");
+        });
     }
 
     @Override

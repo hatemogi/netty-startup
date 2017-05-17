@@ -1,7 +1,6 @@
 package nettystartup.h3;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class NicknameProvider {
     private final Queue<String> pool;

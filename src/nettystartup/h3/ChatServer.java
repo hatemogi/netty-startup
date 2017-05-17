@@ -8,7 +8,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 import nettystartup.h2.NettyStartupUtil;
 
-public final class ChatServer {
+public class ChatServer {
     public static void main(String[] args) throws Exception {
         NettyStartupUtil.runServer(8030, pipeline ->
             pipeline.addLast(new LineBasedFrameDecoder(1024, true, true))

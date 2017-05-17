@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class ChatMessageCodecTest {
-    private ChatMessageCodec codec = new ChatMessageCodec();
+    ChatMessageCodec codec = new ChatMessageCodec();
 
     @Test
     public void encode() throws Exception {
